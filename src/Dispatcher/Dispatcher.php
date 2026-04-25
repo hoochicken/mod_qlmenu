@@ -74,7 +74,7 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
         $parametersCustom = new ParametersCustom($params, $this->module);
 
         $menuHelper = $this->getHelperFactory()->getHelper('QlmenuHelper');
-        $displayModel = new DisplayCustom();
+        //$displayModel = new DisplayCustom();
 
         $data['list']       = $menuHelper->getItems($data['params'], $data['app']);
         $data['base']       = $menuHelper->getBaseItem($data['params'], $data['app']);
@@ -85,7 +85,7 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
         $data['path']       = $data['base']->tree;
         $data['showAll']    = $data['params']->get('showAllChildren', 1);
         $data['class_sfx']  = htmlspecialchars($data['params']->get('class_sfx', ''), ENT_COMPAT, 'UTF-8');
-
+        return $data;
         return $displayModel->toArray();
     }
 
