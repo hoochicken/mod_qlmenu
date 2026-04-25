@@ -1,0 +1,43 @@
+/**
+ * mod_qlmenu
+ *
+ * @copyright  Copyright (C) 2026. All rights reserved.
+ * @license    GNU General Public License version 2 or later;
+ */
+
+/* 1st level horizontal */
+.mod-qlmenu-ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.mod-qlmenu-ul > .nav-item {
+    width: auto;
+}
+
+/* Hide submenus by default */
+.mod-menu__sub {
+    display: none;
+    position: absolute;
+    background: white;
+    min-width: 200px;
+    z-index: 1000;
+}
+
+/* Parent positioning context */
+.nav-item {
+    position: relative;
+}
+
+/* 2nd level dropdown */
+.mod-qlmenu-ul > .nav-item > .mod-menu__sub {
+    top: 100%;
+    left: 0;
+}
+
+/* 3rd level default (JS may override) */
+.mod-menu__sub .mod-menu__sub {
+    top: 0;
+    right: 100%;
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "mod_hello",
+  "version": "1.0.0",
+  "description": "Qlmenu",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "mod_qlmenu.script",
+      "type": "script",
+      "uri": "mod_qlmenu/script.js",
+      "dependencies": [
+        "core"
+      ],
+      "attributes": {
+        "type": "module"
+      },
+      "version": "1.0.0"
+    },
+    {
+      "name": "mod_qlmenu.style",
+      "type": "style",
+      "uri": "mod_qlmenu/style.css"
+    }
+  ]
+}
