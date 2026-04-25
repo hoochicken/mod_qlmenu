@@ -13,17 +13,21 @@ use stdClass;
 
 interface ParametersCustomInterface
 {
-    public function hasSlides(): bool;
+    public function getMenutype(): string;
 
-    public function getSlides(): ?SlideCollection;
+    public function getBase(): int;
 
-    public function setSlides(?SlideCollection $slideCollection): void;
+    public function getStartLevel(): int;
 
-    public function getAutoplayMs(): int;
+    public function getEndLevel(): int;
 
-    public function getBoxAlign(): string;
+    public function showAllChildren(): bool;
 
-    public function displayNavigationPrevNext(): bool;
+    public function getLevel1stColor(): string;
 
-    public function displayNavigationDots(): bool;
+    public function getLevel1stBackgroundColor(): string;
+
+    public function getLevel2ndColor(): string;
+
+    public function getLevel2ndBackgroundColor(): string;
 }

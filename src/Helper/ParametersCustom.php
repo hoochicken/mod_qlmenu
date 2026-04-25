@@ -16,49 +16,63 @@ require_once __DIR__ . '/ParametersCustomInterface.php';
 
 class ParametersCustom extends ParametersBasic implements ParametersBasicInterface, ParametersCustomInterface
 {
-    const DEFAULT_AUTOPLAY_MS = 3000;
-
-    private ?SlideCollection $slideCollection = null;
+    private const DEFAULT_MENUTYPE = '';
+    private const DEFAULT_BASE = 0;
+    private const DEFAULT_START_LEVEL = 1;
+    private const DEFAULT_END_LEVEL = 0;
+    private const DEFAULT_SHOW_ALL_CHILDREN = true;
+    private const DEFAULT_LEVEL_1ST_COLOR = '#0000ff';
+    private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR = '#ffffff';
+    private const DEFAULT_LEVEL_2ND_COLOR = '#00ffff';
+    private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR = '#ffffff';
 
     public function __construct(Registry $params, stdClass $module)
     {
         parent::__construct($params, $module);
     }
 
-    public function hasSlides(): bool
+    public function getMenutype(): string
     {
-        return !is_null($this->slideCollection) && $this->slideCollection->hasSlides();
+        return (string)($this->params?->get('menutype', static::DEFAULT_MENUTYPE) ?? static::DEFAULT_MENUTYPE);
     }
 
-    public function getSlides(): ?SlideCollection
+    public function getBase(): int
     {
-        return $this->slideCollection;
+        return (int)($this->params?->get('base', static::DEFAULT_BASE) ?? static::DEFAULT_BASE);
     }
 
-    public function setSlides(?SlideCollection $slideCollection): void
+    public function getStartLevel(): int
     {
-        $this->slideCollection = $slideCollection;
+        return (int)($this->params?->get('startLevel', static::DEFAULT_START_LEVEL) ?? static::DEFAULT_START_LEVEL);
     }
 
-    public function getAutoplayMs(): int
+    public function getEndLevel(): int
     {
-        return (int)($this->params?->get('autoplayMs', static::DEFAULT_AUTOPLAY_MS) ?? static::DEFAULT_AUTOPLAY_MS);
+        return (int)($this->params?->get('endLevel', static::DEFAULT_END_LEVEL) ?? static::DEFAULT_END_LEVEL);
     }
 
-    public function getBoxAlign(): string
+    public function showAllChildren(): bool
     {
-        $align = (string)($this->params?->get('boxAlign', 'left') ?? 'left');
-
-        return $align === 'right' ? 'right' : 'left';
+        return (bool)($this->params?->get('showAllChildren', static::DEFAULT_SHOW_ALL_CHILDREN) ?? static::DEFAULT_SHOW_ALL_CHILDREN);
     }
 
-    public function displayNavigationPrevNext(): bool
+    public function getLevel1stColor(): string
     {
-        return (bool)($this->params?->get('displayNavigationPrevNext', 1) ?? 1);
+        return (string)($this->params?->get('level_1st_color', static::DEFAULT_LEVEL_1ST_COLOR) ?? static::DEFAULT_LEVEL_1ST_COLOR);
     }
 
-    public function displayNavigationDots(): bool
+    public function getLevel1stBackgroundColor(): string
     {
-        return (bool)($this->params?->get('displayNavigationDots', 1) ?? 1);
+        return (string)($this->params?->get('level_1st_background_color', static::DEFAULT_LEVEL_1ST_BACKGROUND_COLOR) ?? static::DEFAULT_LEVEL_1ST_BACKGROUND_COLOR);
+    }
+
+    public function getLevel2ndColor(): string
+    {
+        return (string)($this->params?->get('level_2nd_color', static::DEFAULT_LEVEL_2ND_COLOR) ?? static::DEFAULT_LEVEL_2ND_COLOR);
+    }
+
+    public function getLevel2ndBackgroundColor(): string
+    {
+        return (string)($this->params?->get('level_2nd_background_color', static::DEFAULT_LEVEL_2ND_BACKGROUND_COLOR) ?? static::DEFAULT_LEVEL_2ND_BACKGROUND_COLOR);
     }
 }

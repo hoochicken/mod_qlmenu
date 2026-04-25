@@ -16,28 +16,9 @@ require_once __DIR__ . '/DisplayCustomInterface.php';
 
 class DisplayCustom extends DisplayBasic implements DisplayBasicInterface, DisplayCustomInterface
 {
-    const DEFAULT_AUTOPLAY_MS = 3000;
-
-    private ?SlideCollection $slideCollection = null;
-
     public function __construct(Registry $params, stdClass $module)
     {
         parent::__construct($params, $module);
-    }
-
-    public function hasSlides(): bool
-    {
-        return !is_null($this->slideCollection) && $this->slideCollection->hasSlides();
-    }
-
-    public function getSlides(): ?SlideCollection
-    {
-        return $this->slideCollection;
-    }
-
-    public function setSlides(?SlideCollection $slideCollection): void
-    {
-        $this->slideCollection = $slideCollection;
     }
 
     public function getAutoplayMs(): int

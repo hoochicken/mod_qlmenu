@@ -11,10 +11,9 @@ namespace Hoochicken\Module\Qlmenu\Site\Dispatcher;
 defined('_JEXEC') or die;
 
 use Exception;
+use Hoochicken\Module\Qlmenu\Site\Helper\DisplayCustom;
 use Hoochicken\Module\Qlmenu\Site\Helper\ParametersCustom;
 use Hoochicken\Module\Qlmenu\Site\Helper\QlmenuHelper;
-use Hoochicken\Module\Qlmenu\Site\Helper\SlideCollection;
-use Hoochicken\Module\Qlmenu\Site\Helper\SlideItem;
 use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
 use Joomla\CMS\Helper\HelperFactoryAwareInterface;
 use Joomla\CMS\Helper\HelperFactoryAwareTrait;
@@ -24,8 +23,6 @@ use Joomla\Registry\Registry;
 class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareInterface
 {
     use HelperFactoryAwareTrait;
-
-    const SLIDER_NUMBER_TOTAL = 10;
 
     private ?Registry $params = null;
 
@@ -41,13 +38,26 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
      */
     public function dispatch()
     {
-        $displayData = $this->getLayoutData();
+        try {
+            $this->loadLanguage();
 
-        if (!$displayData['list']) {
-            return;
+            $displayData = $this->getLayoutData();
+            if (!$displayData['list']) {
+                return;
+            }
+
+            parent::dispatch();
+
+            if ($this->isProperDisplayCustom($displayData)) {
+                return;
+            }
+
+            /** @var ParametersCustom $displayData */
+            $displayData = $displayData['data'] ?? null;
+            require ModuleHelper::getLayoutPath('mod_qlmenu', $displayData->getLayout());
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
-
-        parent::dispatch();
     }
 
     /**
@@ -60,8 +70,11 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
     protected function getLayoutData()
     {
         $data = parent::getLayoutData();
+        $params = new Registry($data['params'] ?? []);
+        $parametersCustom = new ParametersCustom($params, $this->module);
 
         $menuHelper = $this->getHelperFactory()->getHelper('QlmenuHelper');
+        $displayModel = new DisplayCustom();
 
         $data['list']       = $menuHelper->getItems($data['params'], $data['app']);
         $data['base']       = $menuHelper->getBaseItem($data['params'], $data['app']);
@@ -73,25 +86,7 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
         $data['showAll']    = $data['params']->get('showAllChildren', 1);
         $data['class_sfx']  = htmlspecialchars($data['params']->get('class_sfx', ''), ENT_COMPAT, 'UTF-8');
 
-        return $data;
-    }
-
-    public function Xdispatch()
-    {
-        try {
-            $this->loadLanguage();
-
-            $displayData = $this->getLayoutData();
-            if ($this->isProperDisplayCustom($displayData)) {
-                return;
-            }
-
-            /** @var ParametersCustom $displayData */
-            $displayData = $displayData['data'] ?? null;
-            require ModuleHelper::getLayoutPath('mod_qlmenu', $displayData->getLayout());
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
+        return $displayModel->toArray();
     }
 
     protected function isProperDisplayCustom(array $displayData): bool
