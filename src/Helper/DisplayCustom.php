@@ -16,30 +16,8 @@ require_once __DIR__ . '/DisplayCustomInterface.php';
 
 class DisplayCustom extends DisplayBasic implements DisplayBasicInterface, DisplayCustomInterface
 {
-    public function __construct(Registry $params, stdClass $module)
+    public function __construct(ParametersCustom $params, stdClass $module)
     {
         parent::__construct($params, $module);
-    }
-
-    public function getAutoplayMs(): int
-    {
-        return (int)($this->params?->get('autoplayMs', static::DEFAULT_AUTOPLAY_MS) ?? static::DEFAULT_AUTOPLAY_MS);
-    }
-
-    public function getBoxAlign(): string
-    {
-        $align = (string)($this->params?->get('boxAlign', 'left') ?? 'left');
-
-        return $align === 'right' ? 'right' : 'left';
-    }
-
-    public function displayNavigationPrevNext(): bool
-    {
-        return (bool)($this->params?->get('displayNavigationPrevNext', 1) ?? 1);
-    }
-
-    public function displayNavigationDots(): bool
-    {
-        return (bool)($this->params?->get('displayNavigationDots', 1) ?? 1);
     }
 }

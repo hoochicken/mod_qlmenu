@@ -20,13 +20,15 @@ require_once __DIR__ . '/DisplayBasicInterface.php';
 class DisplayBasic implements DisplayBasicInterface
 {
     protected ?Registry $params = null;
+    protected ?ParametersCustom $parametersCustom = null;
     protected ?stdClass $module = null;
     protected ?string $message = null;
     protected ?ErrorCollection $errors = null;
 
-    public function __construct(Registry $params, stdClass $module)
+    public function __construct(ParametersCustom $parametersCustom, stdClass $module)
     {
-        $this->params = $params;
+        $this->parametersCustom = $parametersCustom;
+        $this->params = $parametersCustom->getParams();
         $this->module = $module;
     }
 
