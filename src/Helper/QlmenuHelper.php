@@ -222,143 +222,39 @@ class QlmenuHelper
         }
         return implode(' ', $class);
     }
-
-    /**
-     * Get base menu item.
-     *
-     * @param Registry                   &$params The module options.
-     * @param CMSApplicationInterface $app The application
-     *
-     * @return  object
-     *
-     * @since    5.4.0
-     */
+    
     public function getBaseItem(Registry &$params, CMSApplicationInterface $app): object
     {
-        // Get base menu item from parameters
-        if ($params->get('base')) {
-            $base = $app->getMenu()->getItem($params->get('base'));
-        } else {
-            $base = false;
-        }
-
-        // Use active menu item if no base found
-        if (!$base) {
-            $base = $this->getActiveItem($app);
-        }
-
-        return $base;
+        $base = ($params->get('base')) ? $app->getMenu()->getItem($params->get('base')): false;
+        return !$base ? $this->getActiveItem($app) : $base;
     }
 
-    /**
-     * Get active menu item.
-     *
-     * @param CMSApplicationInterface $app The application
-     *
-     * @return  object
-     *
-     * @since    5.4.0
-     */
     public function getActiveItem(CMSApplicationInterface $app): object
     {
         $menu = $app->getMenu();
-
         return $menu->getActive() ?: $this->getDefaultItem($app);
     }
-
-    /**
-     * Get default menu item (home page) for current language.
-     *
-     * @param CMSApplicationInterface $app The application
-     *
-     * @return  object
-     *
-     * @since   5.4.0
-     */
     public function getDefaultItem(CMSApplicationInterface $app): object
     {
         $menu = $app->getMenu();
-
-        // Look for the home menu
-        if (Multilanguage::isEnabled()) {
-            return $menu->getDefault($app->getLanguage()->getTag());
-        }
-
-        return $menu->getDefault();
+        return (Multilanguage::isEnabled()) ? $menu->getDefault($app->getLanguage()->getTag()) : $menu->getDefault();
     }
 
-
-    /**
-     * Get a list of the menu items.
-     *
-     * @param Registry  &$params The module options.
-     *
-     * @return  array
-     *
-     * @since   1.5
-     *
-     * @deprecated 5.4.0 will be removed in 7.0
-     *             Use the non-static method getItems
-     *             Example: Factory::getApplication()->bootModule('mod_menu', 'site')
-     *                          ->getHelper('MenuHelper')
-     *                          ->getItems($params, $app)
-     */
     public static function getList(&$params)
     {
         return (new self())->getItems($params, Factory::getApplication());
     }
-
-    /**
-     * Get base menu item.
-     *
-     * @param Registry  &$params The module options.
-     *
-     * @return  object
-     *
-     * @since    3.0.2
-     *
-     * @deprecated 5.4.0 will be removed in 7.0
-     *             Use the non-static method getBaseItem
-     *             Example: Factory::getApplication()->bootModule('mod_menu', 'site')
-     *                          ->getHelper('MenuHelper')
-     *                          ->getBaseItem($params, $app)
-     */
+    
     public static function getBase(&$params)
     {
         return (new self())->getBaseItem($params, Factory::getApplication());
     }
-
-    /**
-     * Get active menu item.
-     *
-     * @param Registry  &$params The module options.
-     *
-     * @return  object
-     *
-     * @since    3.0.2
-     *
-     * @deprecated 5.4.0 will be removed in 7.0
-     *             Use the non-static method getActiveItem
-     *             Example: Factory::getApplication()->bootModule('mod_menu', 'site')
-     *                          ->getHelper('MenuHelper')
-     *                          ->getActiveItem($app)
-     */
+    
     public static function getActive(&$params)
     {
         return (new self())->getActiveItem(Factory::getApplication());
     }
-
-    /**
-     * Get default menu item (home page) for current language.
-     *
-     * @return  object
-     *
-     * @deprecated 5.4.0 will be removed in 7.0
-     *             Use the non-static method getDefaultItem
-     *             Example: Factory::getApplication()->bootModule('mod_menu', 'site')
-     *                          ->getHelper('MenuHelper')
-     *                          ->getDefaultItem($app)
-     */
+    
     public static function getDefault()
     {
         return (new self())->getDefaultItem(Factory::getApplication());

@@ -10,8 +10,22 @@
 
 defined('_JEXEC') or die;
 
+use Hoochicken\Module\Qlmenu\Site\Helper\DisplayCustom;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Service\Provider\Application;
 use Joomla\Filter\OutputFilter;
+use Joomla\Registry\Registry;
+
+
+/**
+ * @var stdClass $module
+ * @var string $class_sfx
+ * @var array $list
+ * @var Application $app
+ * @var Registry $params
+ * @var array $path
+ * @var DisplayCustom $displayModel
+ */
 
 $attributes = [];
 
@@ -27,7 +41,7 @@ if ($item->anchor_rel) {
     $attributes['rel'] = $item->anchor_rel;
 }
 
-if ($item->id == $active_id) {
+if ($item->id == $displayModel->getActive()?->id ?? 0) {
     $attributes['aria-current'] = 'location';
 
     if ($item->current) {

@@ -83,15 +83,22 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
 
         $list = $menuHelper->getItems($params, $app, $base->tree, $active->id, $default->id);
 
+        $displayModel = new DisplayCustom($parametersCustom, $this->module);
+        $displayModel->setMenuItems($list);
+        $displayModel->setActive($default);
+
+
         $data['list']       = $list;
-        $data['base']       = $menuHelper->getBaseItem($data['params'], $data['app']);
+        // $data['base']       = $menuHelper->getBaseItem($data['params'], $data['app']);
+        // $data['default']    = $menuHelper->getDefaultItem($data['app']);
+        // $data['default_id'] = $data['default']->id;
+        // $data['path']       = $data['base']->tree;
         $data['active']     = $menuHelper->getActiveItem($data['app']);
-        $data['default']    = $menuHelper->getDefaultItem($data['app']);
         $data['active_id']  = $data['active']->id;
-        $data['default_id'] = $data['default']->id;
-        $data['path']       = $data['base']->tree;
         $data['showAll']    = $data['params']->get('showAllChildren', 1);
         $data['class_sfx']  = htmlspecialchars($data['params']->get('class_sfx', ''), ENT_COMPAT, 'UTF-8');
+        $data['displayModel']  = $displayModel;
+
         return $data;
         $displayModel = new DisplayCustom($parametersCustom, $this->module);
         $displayModel->setMenuItems($list);

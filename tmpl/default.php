@@ -10,19 +10,22 @@
 
 defined('_JEXEC') or die;
 
+use Hoochicken\Module\Qlmenu\Site\Helper\DisplayCustom;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Service\Provider\Application;
+use Joomla\Registry\Registry;
 
 /**
  * @var stdClass $module
  * @var string $class_sfx
  * @var array $list
- * @var \Joomla\CMS\Service\Provider\Application $app
- * @var \Joomla\Registry\Registry $params
- * @var int $default_id
+ * @var Application $app
+ * @var Registry $params
+ * @var Registry $itemParams
  * @var array $path
- * @var int $active_id
+ * @var DisplayCustom $displayModel
  */
 
 /** @var Joomla\CMS\WebAsset\WebAssetManager $wa */
@@ -34,49 +37,11 @@ $wa->useStyle('mod_qlmenu.style');
 $wa->addInlineStyle('* { background:red; }');
 
 
-
 $tagId = $params->get('tag_id', '') ?: 'mod-menu' . $module->id;
 // $id = htmlspecialchars($tagId, ENT_QUOTES, 'UTF-8');
 $id = sprintf('mod-qlmenu-%s', $module->id);
 $startLevel = (int)$params->get('startLevel', 1);
 
-// set class
-foreach ($list as $i => &$item) {
-    $itemParams = $item->getParams();
-    $class = ['nav-item', sprintf('item-%s', $item->id)];
-    if ($item->id == $default_id) {
-        $class[] = 'default';
-    }
-    if ($item->id == $active_id || ($item->type === 'alias' && $itemParams->get('aliasoptions') == $active_id)) {
-        $class[] = 'current';
-    }
-
-    if ($item->type === 'separator') {
-        $class[] = 'divider';
-    }
-
-    if ($item->deeper) {
-        $class[] = 'deeper';
-    }
-
-    if ($item->parent) {
-        $class[] = 'parent';
-    }
-
-    if (in_array($item->id, $path)) {
-        $class[] = 'active';
-    } elseif ($item->type === 'alias') {
-        $aliasToId = $itemParams->get('aliasoptions');
-
-        if (count($path) > 0 && $aliasToId == $path[count($path) - 1]) {
-            $class[] = 'active';
-        } elseif (in_array($aliasToId, $path)) {
-            $class[] = 'alias-parent-active';
-        }
-    }
-
-    $item->getParams()->set('class', implode(' ', $class));
-}
 
 // The menu class is deprecated. Use mod-menu instead
 ?>
