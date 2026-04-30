@@ -191,14 +191,14 @@ class QlmenuHelper
     {
         $itemParams = $item->getParams();
         $class = ['nav-item', sprintf('item-%s', $item->id)];
-        if ($item->id == $default_id) {
+        if ((int)$item->id === $default_id) {
             $class[] = 'default';
         }
-        if ($item->id == $active_id || ($item->type === 'alias' && $itemParams->get('aliasoptions') == $active_id)) {
+        if ((int)$item->id === $active_id || ('alias' === $item->type && (int)$itemParams->get('aliasoptions') === $active_id)) {
             $class[] = 'current';
         }
 
-        if ($item->type === 'separator') {
+        if ('separator' === $item->type) {
             $class[] = 'divider';
         }
 
@@ -212,7 +212,7 @@ class QlmenuHelper
 
         if (in_array($item->id, $path)) {
             $class[] = 'active';
-        } elseif ($item->type === 'alias') {
+        } elseif ('alias' === $item->type) {
             $aliasToId = $itemParams->get('aliasoptions');
             if (count($path) > 0 && $aliasToId == $path[count($path) - 1]) {
                 $class[] = 'active';
