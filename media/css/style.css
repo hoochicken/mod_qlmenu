@@ -10,34 +10,97 @@
     display: flex;
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
-.mod-qlmenu-ul > .nav-item {
-    width: auto;
+.mod-qlmenu-ul button {
+    background: transparent;
+    border: 0;
+    padding: 0;
 }
 
-/* Hide submenus by default */
-.mod-menu__sub {
+.mod-qlmenu-ul > li {
+    position: relative;
+    list-style: none;
+}
+
+.mod-qlmenu-ul .mod-menu__sub {
     display: none;
     position: absolute;
+    min-width: 220px;
     background: white;
-    min-width: 200px;
-    z-index: 1000;
+    z-index: 9999;
+    padding: 0;
+    margin: 0;
 }
 
-/* Parent positioning context */
-.nav-item {
-    position: relative;
-}
-
-/* 2nd level dropdown */
-.mod-qlmenu-ul > .nav-item > .mod-menu__sub {
+.mod-qlmenu-ul > li > .mod-menu__sub {
     top: 100%;
     left: 0;
 }
 
-/* 3rd level default (JS may override) */
-.mod-menu__sub .mod-menu__sub {
+.mod-qlmenu-ul .mod-menu__sub li {
+    position: relative;
+}
+
+/* 3rd level default: open LEFT */
+.mod-qlmenu-ul .mod-menu__sub .mod-menu__sub {
     top: 0;
     right: 100%;
 }
+
+.mod-qlmenu-mobile-toggle {
+    display: none;
+}
+
+.mod-qlmenu-ul li {
+    position: relative;
+    list-style: none;
+}
+
+.mod-qlmenu-ul .mod-menu__sub {
+    display: none;
+    position: absolute;
+    min-width: 220px;
+    background: white;
+    z-index: 9999;
+    padding: 0;
+    margin: 0;
+}
+
+.mod-qlmenu-ul > li > .mod-menu__sub {
+    top: 100%;
+    left: 0;
+}
+
+.mod-qlmenu-ul .mod-menu__sub .mod-menu__sub {
+    top: 0;
+    right: 100%;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .mod-qlmenu-mobile-toggle {
+        display: block;
+    }
+
+    .mod-qlmenu-ul {
+        display: none;
+        flex-direction: column;
+    }
+
+    .mod-qlmenu-ul.is-open {
+        display: flex;
+    }
+
+    .mod-qlmenu-ul li {
+        position: static;
+    }
+
+    .mod-qlmenu-ul .mod-menu__sub {
+        position: static;
+        min-width: 0;
+        padding-left: 1rem;
+    }
+}
+

@@ -8,7 +8,7 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
-use Joomla\Registry\Registry;
+use Joomla\CMS\Menu\MenuItem;
 use stdClass;
 
 require_once __DIR__ . '/DisplayBasicInterface.php';
@@ -16,8 +16,27 @@ require_once __DIR__ . '/DisplayCustomInterface.php';
 
 class DisplayCustom extends DisplayBasic implements DisplayBasicInterface, DisplayCustomInterface
 {
+    /** @var MenuItem[]  */
+    private array $menuItems = [];
+
     public function __construct(ParametersCustom $params, stdClass $module)
     {
         parent::__construct($params, $module);
+    }
+
+    public function getParametersCustom(): ParametersCustom
+    {
+        return $this->parametersCustom;
+    }
+
+    public function getMenuItems(): array
+    {
+        return $this->menuItems;
+    }
+
+    public function setMenuItems(array $menuItems): DisplayCustom
+    {
+        $this->menuItems = $menuItems;
+        return $this;
     }
 }

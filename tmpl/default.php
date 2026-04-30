@@ -31,6 +31,9 @@ $wa = $document->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('mod_qlmenu');
 $wa->useScript('mod_qlmenu.script');
 $wa->useStyle('mod_qlmenu.style');
+$wa->addInlineStyle('* { background:red; }');
+
+
 
 $tagId = $params->get('tag_id', '') ?: 'mod-menu' . $module->id;
 // $id = htmlspecialchars($tagId, ENT_QUOTES, 'UTF-8');
@@ -77,6 +80,11 @@ foreach ($list as $i => &$item) {
 
 // The menu class is deprecated. Use mod-menu instead
 ?>
+<button class="mod-qlmenu-mobile-toggle" aria-expanded="false">
+    ☰ Menu
+</button>
+
+
 <ul id="<?php echo $id; ?>" class="mod-qlmenu-ul mod-list <?php echo $class_sfx; ?>">
     <?php foreach ($list as $i => &$item) {
         $itemParams = $item->getParams();

@@ -15,6 +15,7 @@ use Hoochicken\Module\Qlmenu\Site\Helper\DisplayCustom;
 use Hoochicken\Module\Qlmenu\Site\Helper\ParametersCustom;
 use Hoochicken\Module\Qlmenu\Site\Helper\QlmenuHelper;
 use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\HelperFactoryAwareInterface;
 use Joomla\CMS\Helper\HelperFactoryAwareTrait;
 use Joomla\CMS\Helper\ModuleHelper;
@@ -69,13 +70,20 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
      */
     protected function getLayoutData()
     {
+        $app = Factory::getApplication();
         $data = parent::getLayoutData();
         $params = new Registry($data['params'] ?? []);
         $parametersCustom = new ParametersCustom($params, $this->module);
 
+        /** @var QlmenuHelper $menuHelper */
         $menuHelper = $this->getHelperFactory()->getHelper('QlmenuHelper');
+        $base       = $menuHelper->getBaseItem($data['params'], $data['app']);
+        $active     = $menuHelper->getActiveItem($app);
+        $default    = $menuHelper->getDefaultItem($app);
 
-        $data['list']       = $menuHelper->getItems($data['params'], $data['app']);
+        $list = $menuHelper->getItems($params, $app, $base->tree, $active->id, $default->id);
+
+        $data['list']       = $list;
         $data['base']       = $menuHelper->getBaseItem($data['params'], $data['app']);
         $data['active']     = $menuHelper->getActiveItem($data['app']);
         $data['default']    = $menuHelper->getDefaultItem($data['app']);
@@ -86,7 +94,13 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
         $data['class_sfx']  = htmlspecialchars($data['params']->get('class_sfx', ''), ENT_COMPAT, 'UTF-8');
         return $data;
         $displayModel = new DisplayCustom($parametersCustom, $this->module);
+        $displayModel->setMenuItems($list);
         return $displayModel->toArray();
+    }
+
+    protected function setColors(ParametersCustom $parametersCustom): bool
+    {
+        $wam = Factory::getDocument()->getWebAssetManager();
     }
 
     protected function isProperDisplayCustom(array $displayData): bool
