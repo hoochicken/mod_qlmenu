@@ -111,16 +111,14 @@
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
-                
             </fieldset>
 
-            <fieldset name="colors">
-                <field name="level_1st_spacer" type="spacer" label="MOD_QLMENU_SPACER_LEVEL_1ST_LABEL" description="MOD_QLMENU_LEVEL_1ST_SPACER_DESC" />
+            <fieldset name="styles_1st_level">
                 <field
                         name="level_1st_color"
                         type="color"
                         label="MOD_QLMENU_COLOR_LABEL"
-                        default="#0000ff"
+                        default="#000000"
                 />
                 <field
                         name="level_1st_background_color"
@@ -128,19 +126,171 @@
                         label="MOD_QLMENU_BG_COLOR_LABEL"
                         default="#ffffff"
                 />
-                <field name="level_2nd_spacer" type="spacer" label="MOD_QLMENU_SPACER_LEVEL_2ND_LABEL" description="MOD_QLMENU_LEVEL_2ND_SPACER_DESC" />
+                <field
+                        name="level_1st_color_hover"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_HOVER_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_1st_background_color_hover"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_HOVER_LABEL"
+                        default="#eeeeee"
+                />
+                <field
+                        name="level_1st_color_active"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_ACTIVE_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_1st_background_color_active"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_ACTIVE_LABEL"
+                        default="#ff8800"
+                />
+                <field
+                        name="level_1st_padding"
+                        type="text"
+                        label="MOD_QLMENU_PADDING_LABEL"
+                        default="0.5rem 0.75rem"
+                />
+                <field
+                        name="level_1st_font_size"
+                        type="list"
+                        label="MOD_QLMENU_FONT_SIZE_LABEL"
+                        default="1rem"
+                >
+                    <option value="4.8rem">2.8rem</option>
+                    <option value="4.7rem">2.7rem</option>
+                    <option value="4.6rem">2.6rem</option>
+                    <option value="4.5rem">2.5rem</option>
+                    <option value="4.4rem">2.4rem</option>
+                    <option value="4.3rem">2.3rem</option>
+                    <option value="4.2rem">2.2rem</option>
+                    <option value="4.1rem">2.1rem</option>
+                    <option value="4.0rem">2.0rem</option>
+                    <option value="3.9rem">1.9rem</option>
+                    <option value="3.8rem">1.8rem</option>
+                    <option value="3.7rem">1.7rem</option>
+                    <option value="3.6rem">1.6rem</option>
+                    <option value="3.5rem">1.5rem</option>
+                    <option value="3.4rem">1.4rem</option>
+                    <option value="3.3rem">1.3rem</option>
+                    <option value="3.2rem">1.2rem</option>
+                    <option value="3.1rem">1.1rem</option>
+                    <option value="3.0rem">1.0rem</option>
+                    <option value="2.8rem">2.8rem</option>
+                    <option value="2.7rem">2.7rem</option>
+                    <option value="2.6rem">2.6rem</option>
+                    <option value="2.5rem">2.5rem</option>
+                    <option value="2.4rem">2.4rem</option>
+                    <option value="2.3rem">2.3rem</option>
+                    <option value="2.2rem">2.2rem</option>
+                    <option value="2.1rem">2.1rem</option>
+                    <option value="2.0rem">2.0rem</option>
+                    <option value="1.9rem">1.9rem</option>
+                    <option value="1.8rem">1.8rem</option>
+                    <option value="1.7rem">1.7rem</option>
+                    <option value="1.6rem">1.6rem</option>
+                    <option value="1.5rem">1.5rem</option>
+                    <option value="1.4rem">1.4rem</option>
+                    <option value="1.3rem">1.3rem</option>
+                    <option value="1.2rem">1.2rem</option>
+                    <option value="1.1rem">1.1rem</option>
+                    <option value="1.0rem">1.0rem</option>
+                </field>
+            </fieldset>
+
+            <fieldset name="styles_2nd_level">
                 <field
                         name="level_2nd_color"
                         type="color"
                         label="MOD_QLMENU_COLOR_LABEL"
-                        default="#00ffff"
+                        default="#000000"
                 />
                 <field
                         name="level_2nd_background_color"
                         type="color"
                         label="MOD_QLMENU_BG_COLOR_LABEL"
-                        default="#ffffff"
+                        default="#eeeeee"
                 />
+                <field
+                        name="level_2nd_color_hover"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_HOVER_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_2nd_background_color_hover"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_HOVER_LABEL"
+                        default="#ec5800"
+                />
+                <field
+                        name="level_2nd_color_active"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_ACTIVE_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_2nd_background_color_active"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_ACTIVE_LABEL"
+                        default="#ff8800"
+                />
+                <field
+                        name="level_2nd_padding"
+                        type="text"
+                        label="MOD_QLMENU_PADDING_LABEL"
+                        default="0.35rem 0.6rem"
+                />
+                <field
+                        name="level_2nd_font_size"
+                        type="list"
+                        label="MOD_QLMENU_FONT_SIZE_LABEL"
+                        default="1rem"
+                >
+                    <option value="4.8rem">2.8rem</option>
+                    <option value="4.7rem">2.7rem</option>
+                    <option value="4.6rem">2.6rem</option>
+                    <option value="4.5rem">2.5rem</option>
+                    <option value="4.4rem">2.4rem</option>
+                    <option value="4.3rem">2.3rem</option>
+                    <option value="4.2rem">2.2rem</option>
+                    <option value="4.1rem">2.1rem</option>
+                    <option value="4.0rem">2.0rem</option>
+                    <option value="3.9rem">1.9rem</option>
+                    <option value="3.8rem">1.8rem</option>
+                    <option value="3.7rem">1.7rem</option>
+                    <option value="3.6rem">1.6rem</option>
+                    <option value="3.5rem">1.5rem</option>
+                    <option value="3.4rem">1.4rem</option>
+                    <option value="3.3rem">1.3rem</option>
+                    <option value="3.2rem">1.2rem</option>
+                    <option value="3.1rem">1.1rem</option>
+                    <option value="3.0rem">1.0rem</option>
+                    <option value="2.8rem">2.8rem</option>
+                    <option value="2.7rem">2.7rem</option>
+                    <option value="2.6rem">2.6rem</option>
+                    <option value="2.5rem">2.5rem</option>
+                    <option value="2.4rem">2.4rem</option>
+                    <option value="2.3rem">2.3rem</option>
+                    <option value="2.2rem">2.2rem</option>
+                    <option value="2.1rem">2.1rem</option>
+                    <option value="2.0rem">2.0rem</option>
+                    <option value="1.9rem">1.9rem</option>
+                    <option value="1.8rem">1.8rem</option>
+                    <option value="1.7rem">1.7rem</option>
+                    <option value="1.6rem">1.6rem</option>
+                    <option value="1.5rem">1.5rem</option>
+                    <option value="1.4rem">1.4rem</option>
+                    <option value="1.3rem">1.3rem</option>
+                    <option value="1.2rem">1.2rem</option>
+                    <option value="1.1rem">1.1rem</option>
+                    <option value="1.0rem">1.0rem</option>
+                </field>
             </fieldset>
 
             <fieldset name="advanced">

@@ -19,6 +19,7 @@ class DisplayCustom extends DisplayBasic implements DisplayBasicInterface, Displ
     /** @var MenuItem[]  */
     private array $menuItems = [];
     private $active = null;
+    private string $inlineCss = '';
 
     public function __construct(ParametersCustom $params, stdClass $module)
     {
@@ -49,6 +50,17 @@ class DisplayCustom extends DisplayBasic implements DisplayBasicInterface, Displ
     public function setActive($active): DisplayCustom
     {
         $this->active = $active;
+        return $this;
+    }
+
+    public function getInlineCss(): string
+    {
+        return $this->inlineCss;
+    }
+
+    public function setInlineCss(string $inlineCss): DisplayCustom
+    {
+        $this->inlineCss = $inlineCss;
         return $this;
     }
 }

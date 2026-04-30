@@ -80,12 +80,14 @@ class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareI
         $base       = $menuHelper->getBaseItem($data['params'], $data['app']);
         $active     = $menuHelper->getActiveItem($app);
         $default    = $menuHelper->getDefaultItem($app);
+        $inlineCss  = $menuHelper->getInlineCss($parametersCustom);
 
         $list = $menuHelper->getItems($params, $app, $base->tree, $active->id, $default->id);
 
         $displayModel = new DisplayCustom($parametersCustom, $this->module);
         $displayModel->setMenuItems($list);
         $displayModel->setActive($default);
+        $displayModel->setInlineCss($inlineCss);
 
 
         $data['list']       = $list;

@@ -234,6 +234,62 @@ class QlmenuHelper
         $menu = $app->getMenu();
         return $menu->getActive() ?: $this->getDefaultItem($app);
     }
+    public function getInlineCss(ParametersCustom $parametersCustom): string
+    {
+        $level1Color = $parametersCustom->getLevel1stColor();
+        $level1BackgroundColor = $parametersCustom->getLevel1stBackgroundColor();
+        $level1ColorHover = $parametersCustom->getLevel1stColorHover();
+        $level1BackgroundColorHover = $parametersCustom->getLevel1stBackgroundColorHover();
+        $level1ColorActive = $parametersCustom->getLevel1stColorActive();
+        $level1BackgroundColorActive = $parametersCustom->getLevel1stBackgroundColorActive();
+        $level1Padding = $parametersCustom->getLevel1stPadding();
+        $level1FontSize = $parametersCustom->getLevel1stFontSize();
+        $level2Color = $parametersCustom->getLevel2ndColor();
+        $level2BackgroundColor = $parametersCustom->getLevel2ndBackgroundColor();
+        $level2ColorHover = $parametersCustom->getLevel2ndColorHover();
+        $level2BackgroundColorHover = $parametersCustom->getLevel2ndBackgroundColorHover();
+        $level2ColorActive = $parametersCustom->getLevel2ndColorActive();
+        $level2BackgroundColorActive = $parametersCustom->getLevel2ndBackgroundColorActive();
+        $level2Padding = $parametersCustom->getLevel2ndPadding();
+        $level2FontSize = $parametersCustom->getLevel2ndFontSize();
+
+        return implode("\n", [
+            sprintf(
+                'ul.mod-qlmenu-ul > li > * { color: %s; background-color: %s; padding: %s; font-size: %s; }',
+                $level1Color,
+                $level1BackgroundColor,
+                $level1Padding,
+                $level1FontSize
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li:hover > * { color: %s; background-color: %s; }',
+                $level1ColorHover,
+                $level1BackgroundColorHover
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li.active > * { color: %s; background-color: %s; }',
+                $level1ColorActive,
+                $level1BackgroundColorActive
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul li > * { color: %s; background-color: %s; padding: %s; font-size: %s; }',
+                $level2Color,
+                $level2BackgroundColor,
+                $level2Padding,
+                $level2FontSize
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul li:hover > * { color: %s; background-color: %s; }',
+                $level2ColorHover,
+                $level2BackgroundColorHover
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul li.active > * { color: %s; background-color: %s; }',
+                $level2ColorActive,
+                $level2BackgroundColorActive
+            ),
+        ]);
+    }
     public function getDefaultItem(CMSApplicationInterface $app): object
     {
         $menu = $app->getMenu();

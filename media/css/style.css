@@ -24,6 +24,11 @@
     list-style: none;
 }
 
+.mod-qlmenu-ul > li > * {
+    display: inline-block;
+    width: 100%;
+}
+
 .mod-qlmenu-ul .mod-menu__sub {
     display: none;
     position: absolute;
@@ -71,6 +76,11 @@
 .mod-qlmenu-ul > li > .mod-menu__sub {
     top: 100%;
     left: 0;
+}
+
+.mod-qlmenu-ul > li > ul > li > * {
+    display: inline-block;
+    width: 100%;
 }
 
 .mod-qlmenu-ul .mod-menu__sub .mod-menu__sub {

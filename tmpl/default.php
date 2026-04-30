@@ -34,7 +34,7 @@ $wa = $document->getWebAssetManager();
 $wa->getRegistry()->addExtensionRegistryFile('mod_qlmenu');
 $wa->useScript('mod_qlmenu.script');
 $wa->useStyle('mod_qlmenu.style');
-$wa->addInlineStyle('* { background:red; }');
+$wa->addInlineStyle($displayModel->getInlineCss());
 
 
 $tagId = $params->get('tag_id', '') ?: 'mod-menu' . $module->id;
