@@ -50,7 +50,7 @@ $startLevel = (int)$params->get('startLevel', 1);
 </button>
 
 <nav aria-label="Main menu">
-    <ul id="<?php echo $id; ?>" class="na mod-qlmenu-ul mod-list <?php echo $class_sfx; ?>">
+    <ul id="<?php echo $id; ?>" class="nav mod-qlmenu-ul mod-list <?php echo $class_sfx; ?>">
         <?php foreach ($list as $i => &$item) {
             $itemParams = $item->getParams();
             $class = $item->getParams()->get('class', '');
