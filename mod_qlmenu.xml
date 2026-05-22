@@ -157,6 +157,13 @@
                         default="0.5rem 0.75rem"
                 />
                 <field
+                        name="level_1st_width"
+                        type="text"
+                        label="MOD_QLMENU_WIDTH_LABEL"
+                        description="MOD_QLMENU_WIDTH_DESC"
+                        default="auto"
+                />
+                <field
                         name="level_1st_font_size"
                         type="list"
                         label="MOD_QLMENU_FONT_SIZE_LABEL"
@@ -247,6 +254,26 @@
                         default="0.35rem 0.6rem"
                 />
                 <field
+                        name="level_2nd_width"
+                        type="text"
+                        label="MOD_QLMENU_WIDTH_LABEL"
+                        description="MOD_QLMENU_WIDTH_DESC"
+                        default="220px"
+                />
+                <field
+                        name="level_2nd_border_width"
+                        type="text"
+                        label="MOD_QLMENU_BORDER_WIDTH_LABEL"
+                        description="MOD_QLMENU_BORDER_WIDTH_DESC"
+                        default="0"
+                />
+                <field
+                        name="level_2nd_border_color"
+                        type="color"
+                        label="MOD_QLMENU_BORDER_COLOR_LABEL"
+                        default="#cccccc"
+                />
+                <field
                         name="level_2nd_font_size"
                         type="list"
                         label="MOD_QLMENU_FONT_SIZE_LABEL"
@@ -290,6 +317,117 @@
                     <option value="1.2rem">1.2rem</option>
                     <option value="1.1rem">1.1rem</option>
                     <option value="1.0rem">1.0rem</option>
+                </field>
+            </fieldset>
+
+            <fieldset name="styles_3rd_level">
+                <field
+                        name="level_3rd_color"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_3rd_background_color"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_LABEL"
+                        default="#ffffff"
+                />
+                <field
+                        name="level_3rd_color_hover"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_HOVER_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_3rd_background_color_hover"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_HOVER_LABEL"
+                        default="#ec5800"
+                />
+                <field
+                        name="level_3rd_color_active"
+                        type="color"
+                        label="MOD_QLMENU_COLOR_ACTIVE_LABEL"
+                        default="#000000"
+                />
+                <field
+                        name="level_3rd_background_color_active"
+                        type="color"
+                        label="MOD_QLMENU_BG_COLOR_ACTIVE_LABEL"
+                        default="#ff8800"
+                />
+                <field
+                        name="level_3rd_padding"
+                        type="text"
+                        label="MOD_QLMENU_PADDING_LABEL"
+                        default="0.25rem 0.5rem"
+                />
+                <field
+                        name="level_3rd_width"
+                        type="text"
+                        label="MOD_QLMENU_WIDTH_LABEL"
+                        description="MOD_QLMENU_WIDTH_DESC"
+                        default="200px"
+                />
+                <field
+                        name="level_3rd_border_width"
+                        type="text"
+                        label="MOD_QLMENU_BORDER_WIDTH_LABEL"
+                        description="MOD_QLMENU_BORDER_WIDTH_DESC"
+                        default="0"
+                />
+                <field
+                        name="level_3rd_border_color"
+                        type="color"
+                        label="MOD_QLMENU_BORDER_COLOR_LABEL"
+                        default="#cccccc"
+                />
+                <field
+                        name="level_3rd_font_size"
+                        type="list"
+                        label="MOD_QLMENU_FONT_SIZE_LABEL"
+                        default="0.9rem"
+                >
+                    <option value="4.8rem">4.8rem</option>
+                    <option value="4.7rem">4.7rem</option>
+                    <option value="4.6rem">4.6rem</option>
+                    <option value="4.5rem">4.5rem</option>
+                    <option value="4.4rem">4.4rem</option>
+                    <option value="4.3rem">4.3rem</option>
+                    <option value="4.2rem">4.2rem</option>
+                    <option value="4.1rem">4.1rem</option>
+                    <option value="4.0rem">4.0rem</option>
+                    <option value="3.9rem">3.9rem</option>
+                    <option value="3.8rem">3.8rem</option>
+                    <option value="3.7rem">3.7rem</option>
+                    <option value="3.6rem">3.6rem</option>
+                    <option value="3.5rem">3.5rem</option>
+                    <option value="3.4rem">3.4rem</option>
+                    <option value="3.3rem">3.3rem</option>
+                    <option value="3.2rem">3.2rem</option>
+                    <option value="3.1rem">3.1rem</option>
+                    <option value="3.0rem">3.0rem</option>
+                    <option value="2.8rem">2.8rem</option>
+                    <option value="2.7rem">2.7rem</option>
+                    <option value="2.6rem">2.6rem</option>
+                    <option value="2.5rem">2.5rem</option>
+                    <option value="2.4rem">2.4rem</option>
+                    <option value="2.3rem">2.3rem</option>
+                    <option value="2.2rem">2.2rem</option>
+                    <option value="2.1rem">2.1rem</option>
+                    <option value="2.0rem">2.0rem</option>
+                    <option value="1.9rem">1.9rem</option>
+                    <option value="1.8rem">1.8rem</option>
+                    <option value="1.7rem">1.7rem</option>
+                    <option value="1.6rem">1.6rem</option>
+                    <option value="1.5rem">1.5rem</option>
+                    <option value="1.4rem">1.4rem</option>
+                    <option value="1.3rem">1.3rem</option>
+                    <option value="1.2rem">1.2rem</option>
+                    <option value="1.1rem">1.1rem</option>
+                    <option value="1.0rem">1.0rem</option>
+                    <option value="0.9rem">0.9rem</option>
                 </field>
             </fieldset>
 

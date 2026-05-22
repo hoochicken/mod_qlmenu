@@ -28,6 +28,7 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
     private const DEFAULT_LEVEL_1ST_COLOR_ACTIVE = '#000000';
     private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR_ACTIVE = '#ff8800';
     private const DEFAULT_LEVEL_1ST_PADDING = '0.5rem 0.75rem';
+    private const DEFAULT_LEVEL_1ST_WIDTH = 'auto';
     private const DEFAULT_LEVEL_1ST_FONT_SIZE = '1rem';
     private const DEFAULT_LEVEL_2ND_COLOR = '#000000';
     private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR = '#ffffff';
@@ -36,7 +37,21 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
     private const DEFAULT_LEVEL_2ND_COLOR_ACTIVE = '#000000';
     private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR_ACTIVE = '#ff8800';
     private const DEFAULT_LEVEL_2ND_PADDING = '0.35rem 0.6rem';
+    private const DEFAULT_LEVEL_2ND_WIDTH = '220px';
+    private const DEFAULT_LEVEL_2ND_BORDER_WIDTH = '0';
+    private const DEFAULT_LEVEL_2ND_BORDER_COLOR = '#cccccc';
     private const DEFAULT_LEVEL_2ND_FONT_SIZE = '0.95rem';
+    private const DEFAULT_LEVEL_3RD_COLOR = '#000000';
+    private const DEFAULT_LEVEL_3RD_BACKGROUND_COLOR = '#ffffff';
+    private const DEFAULT_LEVEL_3RD_COLOR_HOVER = '#000000';
+    private const DEFAULT_LEVEL_3RD_BACKGROUND_COLOR_HOVER = '#ec5800';
+    private const DEFAULT_LEVEL_3RD_COLOR_ACTIVE = '#000000';
+    private const DEFAULT_LEVEL_3RD_BACKGROUND_COLOR_ACTIVE = '#ff8800';
+    private const DEFAULT_LEVEL_3RD_PADDING = '0.25rem 0.5rem';
+    private const DEFAULT_LEVEL_3RD_WIDTH = '200px';
+    private const DEFAULT_LEVEL_3RD_BORDER_WIDTH = '0';
+    private const DEFAULT_LEVEL_3RD_BORDER_COLOR = '#cccccc';
+    private const DEFAULT_LEVEL_3RD_FONT_SIZE = '0.9rem';
 
     public function __construct(Registry $params, stdClass $module)
     {
@@ -103,6 +118,11 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
         return (string)($this->params?->get('level_1st_padding', static::DEFAULT_LEVEL_1ST_PADDING) ?? static::DEFAULT_LEVEL_1ST_PADDING);
     }
 
+    public function getLevel1stWidth(): string
+    {
+        return (string)($this->params?->get('level_1st_width', static::DEFAULT_LEVEL_1ST_WIDTH) ?? static::DEFAULT_LEVEL_1ST_WIDTH);
+    }
+
     public function getLevel1stFontSize(): string
     {
         return (string)($this->params?->get('level_1st_font_size', static::DEFAULT_LEVEL_1ST_FONT_SIZE) ?? static::DEFAULT_LEVEL_1ST_FONT_SIZE);
@@ -143,8 +163,78 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
         return (string)($this->params?->get('level_2nd_padding', static::DEFAULT_LEVEL_2ND_PADDING) ?? static::DEFAULT_LEVEL_2ND_PADDING);
     }
 
+    public function getLevel2ndWidth(): string
+    {
+        return (string)($this->params?->get('level_2nd_width', static::DEFAULT_LEVEL_2ND_WIDTH) ?? static::DEFAULT_LEVEL_2ND_WIDTH);
+    }
+
+    public function getLevel2ndBorderWidth(): string
+    {
+        return (string)($this->params?->get('level_2nd_border_width', static::DEFAULT_LEVEL_2ND_BORDER_WIDTH) ?? static::DEFAULT_LEVEL_2ND_BORDER_WIDTH);
+    }
+
+    public function getLevel2ndBorderColor(): string
+    {
+        return (string)($this->params?->get('level_2nd_border_color', static::DEFAULT_LEVEL_2ND_BORDER_COLOR) ?? static::DEFAULT_LEVEL_2ND_BORDER_COLOR);
+    }
+
     public function getLevel2ndFontSize(): string
     {
         return (string)($this->params?->get('level_2nd_font_size', static::DEFAULT_LEVEL_2ND_FONT_SIZE) ?? static::DEFAULT_LEVEL_2ND_FONT_SIZE);
+    }
+
+    public function getLevel3rdColor(): string
+    {
+        return (string)($this->params?->get('level_3rd_color', static::DEFAULT_LEVEL_3RD_COLOR) ?? static::DEFAULT_LEVEL_3RD_COLOR);
+    }
+
+    public function getLevel3rdBackgroundColor(): string
+    {
+        return (string)($this->params?->get('level_3rd_background_color', static::DEFAULT_LEVEL_3RD_BACKGROUND_COLOR) ?? static::DEFAULT_LEVEL_3RD_BACKGROUND_COLOR);
+    }
+
+    public function getLevel3rdColorHover(): string
+    {
+        return (string)($this->params?->get('level_3rd_color_hover', static::DEFAULT_LEVEL_3RD_COLOR_HOVER) ?? static::DEFAULT_LEVEL_3RD_COLOR_HOVER);
+    }
+
+    public function getLevel3rdBackgroundColorHover(): string
+    {
+        return (string)($this->params?->get('level_3rd_background_color_hover', static::DEFAULT_LEVEL_3RD_BACKGROUND_COLOR_HOVER) ?? static::DEFAULT_LEVEL_3RD_BACKGROUND_COLOR_HOVER);
+    }
+
+    public function getLevel3rdColorActive(): string
+    {
+        return (string)($this->params?->get('level_3rd_color_active', static::DEFAULT_LEVEL_3RD_COLOR_ACTIVE) ?? static::DEFAULT_LEVEL_3RD_COLOR_ACTIVE);
+    }
+
+    public function getLevel3rdBackgroundColorActive(): string
+    {
+        return (string)($this->params?->get('level_3rd_background_color_active', static::DEFAULT_LEVEL_3RD_BACKGROUND_COLOR_ACTIVE) ?? static::DEFAULT_LEVEL_3RD_BACKGROUND_COLOR_ACTIVE);
+    }
+
+    public function getLevel3rdPadding(): string
+    {
+        return (string)($this->params?->get('level_3rd_padding', static::DEFAULT_LEVEL_3RD_PADDING) ?? static::DEFAULT_LEVEL_3RD_PADDING);
+    }
+
+    public function getLevel3rdWidth(): string
+    {
+        return (string)($this->params?->get('level_3rd_width', static::DEFAULT_LEVEL_3RD_WIDTH) ?? static::DEFAULT_LEVEL_3RD_WIDTH);
+    }
+
+    public function getLevel3rdBorderWidth(): string
+    {
+        return (string)($this->params?->get('level_3rd_border_width', static::DEFAULT_LEVEL_3RD_BORDER_WIDTH) ?? static::DEFAULT_LEVEL_3RD_BORDER_WIDTH);
+    }
+
+    public function getLevel3rdBorderColor(): string
+    {
+        return (string)($this->params?->get('level_3rd_border_color', static::DEFAULT_LEVEL_3RD_BORDER_COLOR) ?? static::DEFAULT_LEVEL_3RD_BORDER_COLOR);
+    }
+
+    public function getLevel3rdFontSize(): string
+    {
+        return (string)($this->params?->get('level_3rd_font_size', static::DEFAULT_LEVEL_3RD_FONT_SIZE) ?? static::DEFAULT_LEVEL_3RD_FONT_SIZE);
     }
 }

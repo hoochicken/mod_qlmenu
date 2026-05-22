@@ -243,6 +243,7 @@ class QlmenuHelper
         $level1ColorActive = $parametersCustom->getLevel1stColorActive();
         $level1BackgroundColorActive = $parametersCustom->getLevel1stBackgroundColorActive();
         $level1Padding = $parametersCustom->getLevel1stPadding();
+        $level1Width = $parametersCustom->getLevel1stWidth();
         $level1FontSize = $parametersCustom->getLevel1stFontSize();
         $level2Color = $parametersCustom->getLevel2ndColor();
         $level2BackgroundColor = $parametersCustom->getLevel2ndBackgroundColor();
@@ -251,15 +252,30 @@ class QlmenuHelper
         $level2ColorActive = $parametersCustom->getLevel2ndColorActive();
         $level2BackgroundColorActive = $parametersCustom->getLevel2ndBackgroundColorActive();
         $level2Padding = $parametersCustom->getLevel2ndPadding();
+        $level2Width = $parametersCustom->getLevel2ndWidth();
+        $level2BorderWidth = $parametersCustom->getLevel2ndBorderWidth();
+        $level2BorderColor = $parametersCustom->getLevel2ndBorderColor();
         $level2FontSize = $parametersCustom->getLevel2ndFontSize();
+        $level3Color = $parametersCustom->getLevel3rdColor();
+        $level3BackgroundColor = $parametersCustom->getLevel3rdBackgroundColor();
+        $level3ColorHover = $parametersCustom->getLevel3rdColorHover();
+        $level3BackgroundColorHover = $parametersCustom->getLevel3rdBackgroundColorHover();
+        $level3ColorActive = $parametersCustom->getLevel3rdColorActive();
+        $level3BackgroundColorActive = $parametersCustom->getLevel3rdBackgroundColorActive();
+        $level3Padding = $parametersCustom->getLevel3rdPadding();
+        $level3Width = $parametersCustom->getLevel3rdWidth();
+        $level3BorderWidth = $parametersCustom->getLevel3rdBorderWidth();
+        $level3BorderColor = $parametersCustom->getLevel3rdBorderColor();
+        $level3FontSize = $parametersCustom->getLevel3rdFontSize();
 
         return implode("\n", [
             sprintf(
-                'ul.mod-qlmenu-ul > li > * { color: %s; background-color: %s; padding: %s; font-size: %s; }',
+                'ul.mod-qlmenu-ul > li > * { color: %s; background-color: %s; padding: %s; font-size: %s; min-width: %s; }',
                 $level1Color,
                 $level1BackgroundColor,
                 $level1Padding,
-                $level1FontSize
+                $level1FontSize,
+                $level1Width
             ),
             sprintf(
                 'ul.mod-qlmenu-ul > li:hover > * { color: %s; background-color: %s; }',
@@ -272,21 +288,52 @@ class QlmenuHelper
                 $level1BackgroundColorActive
             ),
             sprintf(
-                'ul.mod-qlmenu-ul > li > ul li > * { color: %s; background-color: %s; padding: %s; font-size: %s; }',
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub { min-width: %s; background-color: %s; }',
+                $level2Width,
+                $level2BackgroundColor
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > * { color: %s; background-color: %s; padding: %s; font-size: %s; border-bottom: %s solid %s; }',
                 $level2Color,
                 $level2BackgroundColor,
                 $level2Padding,
-                $level2FontSize
+                $level2FontSize,
+                $level2BorderWidth,
+                $level2BorderColor
             ),
             sprintf(
-                'ul.mod-qlmenu-ul > li > ul li:hover > * { color: %s; background-color: %s; }',
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li:hover > * { color: %s; background-color: %s; }',
                 $level2ColorHover,
                 $level2BackgroundColorHover
             ),
             sprintf(
-                'ul.mod-qlmenu-ul > li > ul li.active > * { color: %s; background-color: %s; }',
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li.active > * { color: %s; background-color: %s; }',
                 $level2ColorActive,
                 $level2BackgroundColorActive
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub { min-width: %s; background-color: %s; }',
+                $level3Width,
+                $level3BackgroundColor
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub > li > * { color: %s; background-color: %s; padding: %s; font-size: %s;  border: %s solid %s;}',
+                $level3Color,
+                $level3BackgroundColor,
+                $level3Padding,
+                $level3FontSize,
+                $level3BorderWidth,
+                $level3BorderColor
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub > li:hover > * { color: %s; background-color: %s; }',
+                $level3ColorHover,
+                $level3BackgroundColorHover
+            ),
+            sprintf(
+                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub > li.active > * { color: %s; background-color: %s; }',
+                $level3ColorActive,
+                $level3BackgroundColorActive
             ),
         ]);
     }

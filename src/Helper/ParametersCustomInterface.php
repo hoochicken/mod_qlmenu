@@ -37,6 +37,8 @@ interface ParametersCustomInterface
 
     public function getLevel1stPadding(): string;
 
+    public function getLevel1stWidth(): string;
+
     public function getLevel1stFontSize(): string;
 
     public function getLevel2ndColor(): string;
@@ -53,5 +55,33 @@ interface ParametersCustomInterface
 
     public function getLevel2ndPadding(): string;
 
+    public function getLevel2ndWidth(): string;
+
+    public function getLevel2ndBorderWidth(): string;
+
+    public function getLevel2ndBorderColor(): string;
+
     public function getLevel2ndFontSize(): string;
+
+    public function getLevel3rdColor(): string;
+
+    public function getLevel3rdBackgroundColor(): string;
+
+    public function getLevel3rdColorHover(): string;
+
+    public function getLevel3rdBackgroundColorHover(): string;
+
+    public function getLevel3rdColorActive(): string;
+
+    public function getLevel3rdBackgroundColorActive(): string;
+
+    public function getLevel3rdPadding(): string;
+
+    public function getLevel3rdWidth(): string;
+
+    public function getLevel3rdBorderWidth(): string;
+
+    public function getLevel3rdBorderColor(): string;
+
+    public function getLevel3rdFontSize(): string;
 }

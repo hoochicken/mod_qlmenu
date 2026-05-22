@@ -32,8 +32,6 @@
 .mod-qlmenu-ul .mod-menu__sub {
     display: none;
     position: absolute;
-    min-width: 220px;
-    background: white;
     z-index: 9999;
     padding: 0;
     margin: 0;
@@ -66,8 +64,6 @@
 .mod-qlmenu-ul .mod-menu__sub {
     display: none;
     position: absolute;
-    min-width: 220px;
-    background: white;
     z-index: 9999;
     padding: 0;
     margin: 0;
