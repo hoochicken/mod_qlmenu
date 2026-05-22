@@ -1,80 +1,102 @@
-/**
- * mod_qlmenu
- *
- * @copyright  Copyright (C) 2026. All rights reserved.
- * @license    GNU General Public License version 2 or later;
- */
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".mod-qlmenu-ul").forEach(menu => {
+    const mobileButton = menu.previousElementSibling;
 
-if (!window.Joomla) {
-  throw new Error('Joomla API was not properly initialised');
-}
-document.addEventListener('DOMContentLoaded', function () {
-  const menu = document.getElementsByClassName('mod-qlmenu-ul');
+    if (
+      mobileButton &&
+      mobileButton.classList.contains("mod-qlmenu-mobile-toggle")
+    ) {
+      mobileButton.addEventListener("click", function () {
+        const isOpen = menu.classList.toggle("is-open");
+        mobileButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      });
+    }
 
-  // Handle all toggle buttons (2nd level open/close)
-  menu.querySelectorAll('.mod-qlmenu__toggle-sub').forEach(button => {
-    button.addEventListener('click', function (e) {
-      e.stopPropagation();
+    menu.querySelectorAll(".mod-menu__sub").forEach(submenu => {
+      submenu.style.display = "none";
+    });
 
-      const expanded = this.getAttribute('aria-expanded') === 'true';
-      const submenuIds = this.getAttribute('aria-controls').split(' ');
+    menu.querySelectorAll(".mod-qlmenu__toggle-sub").forEach(button => {
+      button.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-      submenuIds.forEach(id => {
-        const submenu = document.getElementById(id);
-        if (!submenu) return;
+        const parentLi = button.closest("li");
+        const submenu = parentLi.querySelector(":scope > .mod-menu__sub");
+        const isOpen = button.getAttribute("aria-expanded") === "true";
 
-        submenu.style.display = expanded ? 'none' : 'block';
-        submenu.setAttribute('aria-hidden', expanded ? 'true' : 'false');
+        closeSiblingMenus(parentLi);
 
-        if (!expanded) {
-          positionSubmenu(submenu);
+        if (submenu) {
+          submenu.style.display = isOpen ? "none" : "block";
+          button.setAttribute("aria-expanded", isOpen ? "false" : "true");
+
+          if (!isOpen && window.innerWidth >= 768) {
+            positionSubmenu(submenu);
+          }
         }
       });
+    });
 
-      this.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    document.addEventListener("click", function () {
+      if (window.innerWidth >= 768) {
+        closeAllMenus(menu);
+      }
+    });
+
+    menu.addEventListener("click", function (event) {
+      event.stopPropagation();
     });
   });
 
-  // Close menu when clicking outside
-  document.addEventListener('click', function () {
-    menu.querySelectorAll('.mod-menu__sub').forEach(sub => {
-      sub.style.display = 'none';
-      sub.setAttribute('aria-hidden', 'true');
+  function closeSiblingMenus(currentLi) {
+    const parentUl = currentLi.parentElement;
+
+    parentUl.querySelectorAll(":scope > li").forEach(li => {
+      if (li === currentLi) return;
+
+      li.querySelectorAll(".mod-menu__sub").forEach(submenu => {
+        submenu.style.display = "none";
+      });
+
+      li.querySelectorAll(".mod-qlmenu__toggle-sub").forEach(button => {
+        button.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
+  function closeAllMenus(menu) {
+    menu.querySelectorAll(".mod-menu__sub").forEach(submenu => {
+      submenu.style.display = "none";
     });
 
-    menu.querySelectorAll('.mod-qlmenu__toggle-sub').forEach(btn => {
-      btn.setAttribute('aria-expanded', 'false');
+    menu.querySelectorAll(".mod-qlmenu__toggle-sub").forEach(button => {
+      button.setAttribute("aria-expanded", "false");
     });
-  });
+  }
 
   function positionSubmenu(submenu) {
     const parentLi = submenu.parentElement;
-    const rect = submenu.getBoundingClientRect();
+    const isNested = parentLi.closest(".mod-menu__sub");
 
-    // Reset first
-    submenu.style.left = '';
-    submenu.style.right = '';
+    submenu.style.left = "";
+    submenu.style.right = "";
+    submenu.style.top = "";
 
-    // Detect if it's 3rd level (nested inside another submenu)
-    const isThirdLevel = parentLi.closest('.mod-menu__sub');
+    if (isNested) {
+      // submenu.style.top = "0";
+      // submenu.style.right = "100%";
+      submenu.style.left = "auto";
 
-    if (isThirdLevel) {
-      // Default: open LEFT
-      submenu.style.left = 'auto';
-      submenu.style.right = '100%';
+      const rect = submenu.getBoundingClientRect();
 
-      // Check if there's enough space on the left
-      const leftSpace = rect.left;
-      if (leftSpace < 200) {
-        // Not enough space → open RIGHT instead
-        submenu.style.right = 'auto';
-        submenu.style.left = '100%';
+      if (rect.left < 0) {
+        submenu.style.right = "auto";
+        submenu.style.left = "100%";
       }
     } else {
-      // 2nd level: always open downward
-      submenu.style.left = '0';
-      submenu.style.top = '100%';
+      submenu.style.top = "100%";
+      submenu.style.left = "0";
     }
   }
 });
-

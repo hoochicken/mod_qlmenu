@@ -50,8 +50,8 @@
 
 /* 3rd level default: open LEFT */
 .mod-qlmenu-ul .mod-menu__sub .mod-menu__sub {
-    top: 0;
-    right: 100%;
+    /*top: 0;
+    right: 100%;*/
 }
 
 .mod-qlmenu-mobile-toggle {
@@ -74,8 +74,8 @@
 }
 
 .mod-qlmenu-ul > li > .mod-menu__sub {
-    top: 100%;
-    left: 0;
+    /*top: 100%;
+    left: 0;*/
 }
 
 .mod-qlmenu-ul > li > ul > li > * {
@@ -83,9 +83,15 @@
     width: 100%;
 }
 
+.mod-qlmenu-ul > li > ul > li > ul > li * {
+    display: inline-block;
+    width: 100%;
+    float:left;
+}
+
 .mod-qlmenu-ul .mod-menu__sub .mod-menu__sub {
-    top: 0;
-    right: 100%;
+    /*top: 0;
+    right: 100%;*/
 }
 
 /* Mobile */

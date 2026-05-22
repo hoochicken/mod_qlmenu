@@ -49,61 +49,62 @@ $startLevel = (int)$params->get('startLevel', 1);
     ☰ Menu
 </button>
 
+<nav aria-label="Main menu">
+    <ul id="<?php echo $id; ?>" class="na mod-qlmenu-ul mod-list <?php echo $class_sfx; ?>">
+        <?php foreach ($list as $i => &$item) {
+            $itemParams = $item->getParams();
+            $class = $item->getParams()->get('class', '');
 
-<ul id="<?php echo $id; ?>" class="mod-qlmenu-ul mod-list <?php echo $class_sfx; ?>">
-    <?php foreach ($list as $i => &$item) {
-        $itemParams = $item->getParams();
-        $class = $item->getParams()->get('class', '');
+            echo '<li class="' . $class . '">';
 
-        echo '<li class="' . $class . '">';
-
-        // The next item is deeper - add toggle only here it is a heading or separator
-        // if ($item->deeper && (int)$item->level === $startLevel && in_array($item->type, ['separator', 'heading'])) {
-        if ($item->deeper && in_array($item->type, ['separator', 'heading'])) {
-            // Add a toggle button.
-            echo '<button class="mod-qlmenu__toggle-sub" aria-expanded="false">';
-        }
-
-        switch ($item->type) :
-            case 'separator':
-            case 'component':
-            case 'heading':
-            case 'url':
-                require ModuleHelper::getLayoutPath('mod_menu', 'default_' . $item->type);
-                break;
-
-            default:
-                require ModuleHelper::getLayoutPath('mod_menu', 'default_url');
-                break;
-        endswitch;
-
-        // The next item is deeper.
-        if ($item->deeper) {
-            // Check type - add only on first level
-            // @todo aria-label - set in menu item ???
-            if (true || (int)$item->level === $startLevel) {
-                switch ($item->type) {
-                    case 'heading':
-                    case 'separator':
-                        echo '<span class="icon-chevron-down" aria-hidden="true">' .
-                                '</span></button>';
-                        break;
-
-                    default:
-                        echo '<button class="mod-qlmenu__toggle-sub" aria-expanded="false">' .
-                                '<span class="icon-chevron-down" aria-hidden="true"></span>' .
-                                '<span class="visually-hidden">' . Text::sprintf('MOD_QLMENU_TOGGLE_SUBMENU_LABEL', $item->title) . '</span>' .
-                                '</button>';
-                }
+            // The next item is deeper - add toggle only here it is a heading or separator
+            // if ($item->deeper && (int)$item->level === $startLevel && in_array($item->type, ['separator', 'heading'])) {
+            if ($item->deeper && in_array($item->type, ['separator', 'heading'])) {
+                // Add a toggle button.
+                echo '<button class="mod-qlmenu__toggle-sub" aria-expanded="false">';
             }
-            echo '<ul class="mod-menu__sub list-unstyled small">';
-        } elseif ($item->shallower) {
-            // The next item is shallower.
-            echo '</li>';
-            echo str_repeat('</ul></li>', $item->level_diff);
-        } else {
-            // The next item is on the same level.
-            echo '</li>';
+
+            switch ($item->type) :
+                case 'separator':
+                case 'component':
+                case 'heading':
+                case 'url':
+                    require ModuleHelper::getLayoutPath('mod_menu', 'default_' . $item->type);
+                    break;
+
+                default:
+                    require ModuleHelper::getLayoutPath('mod_menu', 'default_url');
+                    break;
+            endswitch;
+
+            // The next item is deeper.
+            if ($item->deeper) {
+                // Check type - add only on first level
+                // @todo aria-label - set in menu item ???
+                if (true || (int)$item->level === $startLevel) {
+                    switch ($item->type) {
+                        case 'heading':
+                        case 'separator':
+                            echo '<span class="icon-chevron-down" aria-hidden="true">' .
+                                    '</span></button>';
+                            break;
+
+                        default:
+                            echo '<button class="mod-qlmenu__toggle-sub" aria-expanded="false">' .
+                                    '<span class="icon-chevron-down" aria-hidden="true"></span>' .
+                                    '<span class="visually-hidden">' . Text::sprintf('MOD_QLMENU_TOGGLE_SUBMENU_LABEL', $item->title) . '</span>' .
+                                    '</button>';
+                    }
+                }
+                echo '<ul class="mod-menu__sub list-unstyled small">';
+            } elseif ($item->shallower) {
+                // The next item is shallower.
+                echo '</li>';
+                echo str_repeat('</ul></li>', $item->level_diff);
+            } else {
+                // The next item is on the same level.
+                echo '</li>';
+            }
         }
-    }
     ?></ul>
+</nav>
