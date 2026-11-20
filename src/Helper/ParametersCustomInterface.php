@@ -8,6 +8,8 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 use Joomla\Registry\Registry;
 use stdClass;
 
@@ -22,6 +24,8 @@ interface ParametersCustomInterface
     public function getEndLevel(): int;
 
     public function showAllChildren(): bool;
+
+    public function useStyles(): bool;
 
     public function getLevel1stColor(): string;
 

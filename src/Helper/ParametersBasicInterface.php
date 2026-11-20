@@ -8,13 +8,15 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 use Joomla\Registry\Registry;
 use stdClass;
 
 interface ParametersBasicInterface
 {
     /**
-     * @return array{ message: string, params: Registry, module: stdClass, errors: MessageItem[] }
+     * @return array{ message: string, params: Registry, module: stdClass, errors: ErrorItem[] }
      */
     public function toArray(): array;
 
@@ -42,7 +44,7 @@ interface ParametersBasicInterface
 
     public function existsErrors(): bool;
 
-    public function getErrors(): ?MessageCollection;
+    public function getErrors(): ?ErrorCollection;
 
-    public function setErrors(?MessageCollection $errors): void;
+    public function setErrors(?ErrorCollection $errors): void;
 }

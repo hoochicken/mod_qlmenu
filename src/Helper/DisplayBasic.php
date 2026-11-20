@@ -8,10 +8,11 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 use Joomla\Registry\Registry;
 use stdClass;
 
-require_once __DIR__ . '/DisplayBasicInterface.php';
 
 /**
  * this class contains all basic functionality that a module needs
@@ -48,12 +49,12 @@ class DisplayBasic implements DisplayBasicInterface
 
     public function showTitle(): bool
     {
-        return (bool)$this->module->showtitle ?? false;
+        return (bool)($this->module->showtitle ?? false);
     }
 
     public function getHeaderTag(): string
     {
-        return (bool)$this->params->get('header_tag', 'h3');
+        return (string)$this->params->get('header_tag', 'h3');
     }
 
     public function getModuleTag(): string
@@ -77,7 +78,7 @@ class DisplayBasic implements DisplayBasicInterface
 
     public function existsErrors(): bool
     {
-        return !is_null($this->errors) && !$this->errors->hasErrors();
+        return $this->errors !== null && $this->errors->hasErrors();
     }
 
     public function getParams(): ?Registry

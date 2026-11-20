@@ -8,11 +8,11 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 use Joomla\CMS\Menu\MenuItem;
 use stdClass;
 
-require_once __DIR__ . '/DisplayBasicInterface.php';
-require_once __DIR__ . '/DisplayCustomInterface.php';
 
 class DisplayCustom extends DisplayBasic implements DisplayBasicInterface, DisplayCustomInterface
 {

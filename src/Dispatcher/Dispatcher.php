@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package     Hoochicken\Module\Qlmenu
  *
@@ -8,136 +9,99 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Dispatcher;
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Exception;
 use Hoochicken\Module\Qlmenu\Site\Helper\DisplayCustom;
 use Hoochicken\Module\Qlmenu\Site\Helper\ParametersCustom;
 use Hoochicken\Module\Qlmenu\Site\Helper\QlmenuHelper;
 use Joomla\CMS\Dispatcher\AbstractModuleDispatcher;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\HelperFactoryAwareInterface;
 use Joomla\CMS\Helper\HelperFactoryAwareTrait;
-use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\Registry\Registry;
 
+/**
+ * Dispatcher for mod_qlmenu.
+ *
+ * AbstractModuleDispatcher::dispatch() loads the language, calls getLayoutData(),
+ * extracts the returned array into the layout scope and includes the configured
+ * layout from tmpl/ (or a template override).
+ */
 class Dispatcher extends AbstractModuleDispatcher implements HelperFactoryAwareInterface
 {
     use HelperFactoryAwareTrait;
 
-    private ?Registry $params = null;
-
-
-    use HelperFactoryAwareTrait;
+    private ?array $layoutData = null;
 
     /**
-     * Runs the dispatcher.
+     * Runs the dispatcher. Nothing is rendered when the menu has no visible items.
      *
      * @return  void
-     *
-     * @since   5.4.0
      */
     public function dispatch()
     {
-        try {
-            $this->loadLanguage();
+        $this->loadLanguage();
 
-            $displayData = $this->getLayoutData();
-            if (!$displayData['list']) {
-                return;
-            }
+        $displayData = $this->getLayoutData();
 
-            parent::dispatch();
-
-            if ($this->isProperDisplayCustom($displayData)) {
-                return;
-            }
-
-            /** @var ParametersCustom $displayData */
-            $displayData = $displayData['data'] ?? null;
-            require ModuleHelper::getLayoutPath('mod_qlmenu', $displayData->getLayout());
-        } catch (Exception $e) {
-            echo $e->getMessage();
+        if (empty($displayData['list'])) {
+            return;
         }
+
+        parent::dispatch();
     }
 
     /**
      * Returns the layout data.
      *
      * @return  array
-     *
-     * @since   5.4.0
      */
     protected function getLayoutData()
     {
-        $app = Factory::getApplication();
-        $data = parent::getLayoutData();
-        $params = new Registry($data['params'] ?? []);
-        $parametersCustom = new ParametersCustom($params, $this->module);
+        // dispatch() calls this once itself and once via parent::dispatch(); build it only once.
+        if ($this->layoutData !== null) {
+            return $this->layoutData;
+        }
+
+        $data   = parent::getLayoutData();
+        $app    = $data['app'];
+        $params = $data['params'];
 
         /** @var QlmenuHelper $menuHelper */
         $menuHelper = $this->getHelperFactory()->getHelper('QlmenuHelper');
-        $base       = $menuHelper->getBaseItem($data['params'], $data['app']);
-        $active     = $menuHelper->getActiveItem($app);
-        $default    = $menuHelper->getDefaultItem($app);
-        $inlineCss  = $menuHelper->getInlineCss($parametersCustom);
 
-        $list = $menuHelper->getItems($params, $app, $base->tree, $active->id, $default->id);
+        $parametersCustom = new ParametersCustom($params, $this->module);
+
+        $base    = $menuHelper->getBaseItem($params, $app);
+        $active  = $menuHelper->getActiveItem($app);
+        $default = $menuHelper->getDefaultItem($app);
+        $list    = $menuHelper->getItems($params, $app, $base->tree, (int) $default->id, (int) $active->id);
 
         $displayModel = new DisplayCustom($parametersCustom, $this->module);
         $displayModel->setMenuItems($list);
-        $displayModel->setActive($default);
-        $displayModel->setInlineCss($inlineCss);
+        $displayModel->setActive($active);
+        $displayModel->setInlineCss(
+            $parametersCustom->useStyles() ? $menuHelper->getInlineCss($parametersCustom, $this->getMenuId()) : ''
+        );
 
+        $data['list']         = $list;
+        $data['base']         = $base;
+        $data['active']       = $active;
+        $data['active_id']    = (int) $active->id;
+        $data['default']      = $default;
+        $data['default_id']   = (int) $default->id;
+        $data['path']         = $base->tree;
+        $data['showAll']      = $parametersCustom->showAllChildren();
+        $data['class_sfx']    = htmlspecialchars($params->get('class_sfx', ''), ENT_COMPAT, 'UTF-8');
+        $data['menuId']       = $this->getMenuId();
+        $data['displayModel'] = $displayModel;
 
-        $data['list']       = $list;
-        // $data['base']       = $menuHelper->getBaseItem($data['params'], $data['app']);
-        // $data['default']    = $menuHelper->getDefaultItem($data['app']);
-        // $data['default_id'] = $data['default']->id;
-        // $data['path']       = $data['base']->tree;
-        $data['active']     = $menuHelper->getActiveItem($data['app']);
-        $data['active_id']  = $data['active']->id;
-        $data['showAll']    = $data['params']->get('showAllChildren', 1);
-        $data['class_sfx']  = htmlspecialchars($data['params']->get('class_sfx', ''), ENT_COMPAT, 'UTF-8');
-        $data['displayModel']  = $displayModel;
-
-        return $data;
-        $displayModel = new DisplayCustom($parametersCustom, $this->module);
-        $displayModel->setMenuItems($list);
-        return $displayModel->toArray();
-    }
-
-    protected function setColors(ParametersCustom $parametersCustom): bool
-    {
-        $wam = Factory::getDocument()->getWebAssetManager();
-    }
-
-    protected function isProperDisplayCustom(array $displayData): bool
-    {
-        return empty($displayData) || !isset($displayData['data']) || ParametersCustom::class !== get_class($displayData['data']);
+        return $this->layoutData = $data;
     }
 
     /**
-     * this method has a feeble array as return value due to given framework
-     * anyway, works :-)
-     * @return array|false|string
+     * The HTML id of the <ul>; used to scope the generated inline CSS to this module instance.
      */
-    protected function XgetLayoutData()
+    private function getMenuId(): string
     {
-        try {
-            $data = parent::getLayoutData();
-            $this->params = new Registry($data['params']);
-
-            /** @var QlmenuHelper $helper */
-            $helper = $this->getHelperFactory()->getHelper(QlmenuHelper::class);
-
-            $displayModel = new ParametersCustom($this->params ?? null, $this->module);
-            // $displayModel->setMessage($helper->getMessage($this->params, $this->getApplication()));
-
-            $displayModel->setSlides($this->getSlideCollection($this->params));
-            return $displayModel->toArray();
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
+        return 'mod-qlmenu-' . (int) $this->module->id;
     }
 }

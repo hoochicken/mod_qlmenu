@@ -1,92 +1,44 @@
 ## Qlmenu Joomla Module
 
-Qlmenu is a Joomla 5/6 site module that displays a configurable hero slider with up to **10 slides**. Each slide can have its own image, title, and rich-text content, and can be individually enabled or disabled. The module also provides flexible slider behavior settings such as autoplay, caption alignment, and navigation visibility.
+Qlmenu (`mod_qlmenu`) is a Joomla 6 site module that renders a menu as a horizontal dropdown navigation with up to three styled levels and a mobile toggle.
 
 ### Features
 
-- **Up to 10 slides** with:
-  - Image
-  - Title
-  - Text (editor / HTML)
-  - Per-slide display toggle
-- **Slider behavior settings**:
-  - `autoplayMs`: interval between slides (milliseconds, 0 = no autoplay)
-  - `boxAlign`: caption box alignment (`left` or `right`)
-  - `displayNavigationPrevNext`: show/hide previous/next buttons
-  - `displayNavigationDots`: show/hide pagination dots
-- **Responsive layout** and keyboard / touch navigation
+- Any site menu as source, with **base item**, **start/end level** and **show sub-menu items** options (same semantics as core `mod_menu`)
+- Per level (1st / 2nd / 3rd): text colour, background, hover and active colours, padding, width, font size, and border (levels 2 and 3)
+- Styles are scoped to each module instance (`ul#mod-qlmenu-{moduleId}`), so several qlmenu modules can live on one page
+- Keyboard-accessible sub-menu toggles (`aria-expanded`), mobile toggle button
+- Two layouts: `default` and `collapse-default` (Bootstrap navbar collapse)
+- Template overrides work as usual: `templates/<template>/html/mod_qlmenu/`
 
-### How it works (architecture)
+### Architecture (Joomla 4/5/6 module structure)
 
-- **Models**
-  - `ParametersBasic` / `ParametersBasicInterface`: base data for the module (params, module, message, errors).
-  - `DisplayCustom` / `DisplayCustomInterface`: extends the basic display with slide-related data and slider settings.
-  - `SlideItem`: represents a single slide (display flag, image, title, text, helper methods like `existsImage()`, `existsTitle()`, `existsText()`).
-  - `SlideCollection`: collection of `SlideItem` objects with `add()`, `set()`, `get()`, `isEmpty()`.
-  - `ErrorItem`, `ErrorCollection`: encapsulate error handling.
+```
+mod_qlmenu.xml                  manifest, declares namespace Hoochicken\Module\Qlmenu (src/)
+services/provider.php           DI service provider: ModuleDispatcherFactory, HelperFactory, Module
+src/Dispatcher/Dispatcher.php   builds the layout data; extends AbstractModuleDispatcher
+src/Helper/QlmenuHelper.php     loads/filters menu items (cached), computes <li> classes, builds inline CSS
+src/Helper/Parameters*.php      typed access to module params (ParametersCustom = qlmenu specific params)
+src/Helper/Display*.php         view model handed to the layout ($displayModel)
+src/Helper/Error*.php           error collection used by the view model
+tmpl/default.php                main layout; sub-layouts default_{component,url,heading,separator}.php
+tmpl/collapse-default.php       Bootstrap collapse wrapper around default.php
+media/joomla.asset.json         web assets mod_qlmenu.script / mod_qlmenu.style
+_jupdate/mod_qlmenu.xml         update server file
+```
 
-- **Dispatcher**
-  - `src/Dispatcher/Dispatcher.php` builds the `DisplayCustom` model from module params:
-    - Reads params for slides 1–10.
-    - Creates `SlideItem` instances for slides with configured data.
-    - Adds them to a `SlideCollection` and injects it into `DisplayCustom`.
-    - Populates error collections if needed.
+Request flow:
 
-- **Template**
-  - `tmpl/default.php`:
-    - Loads assets via Joomla WebAsset Manager (`mod_qlmenu.script`, `mod_qlmenu.style`).
-    - Uses `DisplayCustom` to:
-      - Render the module wrapper, title, and message.
-      - Loop through the `SlideCollection` and render `<section class="slide">` for each slide where `isDisplay()` is `true` and the image exists.
-      - Only output title and text when `existsTitle()` / `existsText()` are `true`.
-    - Passes slider settings to JavaScript using `Document::addScriptOptions('mod_qlmenu.config', [...])` and the wrapper methods:
-      - `getAutoplayMs()`
-      - `getBoxAlign()`
-      - `displayNavigationPrevNext()`
-      - `displayNavigationDots()`
+1. Joomla boots the module through `services/provider.php`; classes in `src/` are autoloaded via the manifest `<namespace>`.
+2. `Dispatcher::getLayoutData()` gets `QlmenuHelper` from the helper factory, loads the menu items, and wraps params and items in `ParametersCustom` / `DisplayCustom`.
+3. `AbstractModuleDispatcher::dispatch()` extracts the layout data (`$list`, `$params`, `$module`, `$app`, `$displayModel`, `$menuId`, `$class_sfx`, …) and includes the selected layout.
+4. The layout registers the module's asset file with the WebAssetManager, uses script and style, and adds the generated inline CSS.
 
-- **JavaScript**
-  - `media/js/script.js`:
-    - Reads options from `Joomla.getOptions('mod_qlmenu.config')` and exposes them as `window.SLIDER_CONFIG`:
-      - `autoplayMs`
-      - `boxAlign`
-      - `displayNavigationPrevNext`
-      - `displayNavigationDots`
-    - Merges them with internal `DEFAULT_CONFIG` and initializes the slider on `#heroSlider`.
-    - Handles:
-      - Autoplay (start/pause, configurable interval)
-      - Previous/next buttons
-      - Dots and active state
-      - Keyboard navigation (left/right, space for play/pause)
-      - Basic touch swipe support
+### Configuration
 
-### Configuration in Joomla
-
-1. Install or copy the module into your Joomla instance so that it is available as `mod_qlmenu`.
-2. In the Joomla Administrator, go to **Extensions → Modules** and create or edit a module of type **Qlmenu**.
-3. In the **Slides** fieldset:
-   - For each slide (1–10):
-     - Enable **Display** to show the slide.
-     - Select an **Image**.
-     - Enter a **Title** (optional).
-     - Enter **Text** (optional, supports HTML via editor).
-4. In the **Settings** fieldset:
-   - **Autoplay (ms)**: set the interval, e.g. `3000` for 3 seconds, or `0` to disable autoplay.
-   - **Caption alignment**: choose **Left** or **Right**.
-   - **Show previous/next buttons**: toggle arrow navigation.
-   - **Show navigation dots**: toggle pagination dots below the slider.
-5. Assign the module to a position and menu items as usual, then save and publish.
-
-### Frontend behavior
-
-- Only slides with **Display = Yes** and a valid image path are rendered.
-- Titles and texts are optional; if omitted, their corresponding elements are not rendered.
-- Slider will respect the configured autoplay interval and navigation visibility.
-
-### Development notes
-
-- Settings are stored as module params in `mod_qlmenu.xml`.
-- They are read in `DisplayCustom` and exposed via simple getter methods.
-- The template passes them to JS with `addScriptOptions`, and the JS reads them using `Joomla.getOptions` to configure the slider.
-
-This README is intended as an overview for both users configuring the module in Joomla and developers maintaining or extending its code. 
+1. Install the module ZIP via **System → Install → Extensions**.
+2. Go to **Content → Site Modules → New → Qlmenu**.
+3. **Module** tab: choose the menu, base item, start/end level.
+4. **Styles Level 1/2/3** tabs: adjust colours, padding, widths, borders and font sizes.
+5. **Advanced** tab: layout, menu class, module class, caching.
+6. Assign a position and the pages, then save.

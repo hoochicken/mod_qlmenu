@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package     Hoochicken\Module\Qlmenu
  *
@@ -8,61 +9,78 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
-defined('_JEXEC') or die;
+\defined('_JEXEC') or die;
 
-use Exception;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Cache\Controller\OutputController;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Menu\MenuItem;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\Database\DatabaseInterface;
 
+/**
+ * Helper for mod_qlmenu, obtained through the HelperFactory:
+ * $this->getHelperFactory()->getHelper('QlmenuHelper')
+ */
 class QlmenuHelper
 {
     /**
+     * Name of the item param that carries the computed <li> CSS classes.
+     */
+    public const ITEM_CLASS_PARAM = 'qlmenu_class';
+
+    /**
      * Get a list of the menu items.
      *
-     * @param Registry                  &$params The module options.
-     * @param CMSApplicationInterface $app The application
+     * @param   Registry                 $params      The module options.
+     * @param   CMSApplicationInterface  $app         The application
+     * @param   array                    $path        Tree of the base item
+     * @param   int                      $defaultId   Id of the default (home) menu item
+     * @param   int                      $activeId    Id of the active menu item
      *
-     * @return  array
-     *
-     * @since   5.4.0
+     * @return  MenuItem[]
      */
-    public function getItems(Registry &$params, CMSApplicationInterface $app, array $path = [], int $default_id = 0, int $active_id = 0): array
+    public function getItems(Registry $params, CMSApplicationInterface $app, array $path = [], int $defaultId = 0, int $activeId = 0): array
     {
-        $menu = $app->getMenu();
+        $items = $this->getVisibleItems($params, $app, $path);
 
-        // Get active menu item
-        $base = $this->getBaseItem($params, $app);
+        // Classes depend on the current page, so they are added after the (page independent) cache.
+        return $this->addClassToMenuItems($items, $path, $defaultId, $activeId);
+    }
+
+    /**
+     * Loads the filtered and prepared menu items; cached per menu, view levels and base item.
+     *
+     * @return  MenuItem[]
+     */
+    private function getVisibleItems(Registry $params, CMSApplicationInterface $app, array $path): array
+    {
+        $base   = $this->getBaseItem($params, $app);
         $levels = $app->getIdentity()->getAuthorisedViewLevels();
         asort($levels);
 
-        // Compose cache key
         $cacheKey = 'menu_items' . $params . implode(',', $levels) . '.' . $base->id;
 
         /** @var OutputController $cache */
         $cache = Factory::getContainer()->get(CacheControllerFactoryInterface::class)
-            ->createCacheController('output', ['defaultgroup' => 'mod_menu']);
+            ->createCacheController('output', ['defaultgroup' => 'mod_qlmenu']);
 
         if ($cache->contains($cacheKey)) {
             return $cache->get($cacheKey);
         }
-        $path = $base->tree;
-        $start = (int)$params->get('startLevel', 1);
-        $end = (int)$params->get('endLevel', 0);
-        $showAll = $params->get('showAllChildren', 1);
-        $items = $menu->getItems('menutype', $params->get('menutype'));
+
+        $start          = (int) $params->get('startLevel', 1);
+        $end            = (int) $params->get('endLevel', 0);
+        $showAll        = (int) $params->get('showAllChildren', 1);
+        $items          = $app->getMenu()->getItems('menutype', $params->get('menutype'));
         $hidden_parents = [];
-        $lastitem = 0;
+        $lastitem       = 0;
 
         if (!$items) {
             $cache->store([], $cacheKey);
+
             return [];
         }
 
@@ -70,7 +88,7 @@ class QlmenuHelper
 
         foreach ($items as $i => $item) {
             $item->parent = false;
-            $itemParams = $item->getParams();
+            $itemParams   = $item->getParams();
 
             if (isset($items[$lastitem]) && $items[$lastitem]->id == $item->parent_id && $itemParams->get('menu_show', 1) == 1) {
                 $items[$lastitem]->parent = true;
@@ -102,31 +120,28 @@ class QlmenuHelper
                 }
             }
 
-            $item->deeper = false;
-            $item->shallower = false;
+            $item->deeper     = false;
+            $item->shallower  = false;
             $item->level_diff = 0;
 
             if (isset($items[$lastitem])) {
-                $items[$lastitem]->deeper = ($item->level > $items[$lastitem]->level);
-                $items[$lastitem]->shallower = ($item->level < $items[$lastitem]->level);
+                $items[$lastitem]->deeper     = ($item->level > $items[$lastitem]->level);
+                $items[$lastitem]->shallower  = ($item->level < $items[$lastitem]->level);
                 $items[$lastitem]->level_diff = ($items[$lastitem]->level - $item->level);
             }
 
-            $lastitem = $i;
+            $lastitem     = $i;
             $item->active = false;
-            $item->flink = $item->link;
+            $item->flink  = $item->link;
 
-            // Reverted back for CMS version 2.5.6
             switch ($item->type) {
                 case 'separator':
-                    break;
-
                 case 'heading':
                     // No further action needed.
                     break;
 
                 case 'url':
-                    if ((str_starts_with($item->link, 'index.php?')) && (!str_contains($item->link, 'Itemid='))) {
+                    if (str_starts_with($item->link, 'index.php?') && !str_contains($item->link, 'Itemid=')) {
                         // If this is an internal Joomla link, ensure the Itemid is set.
                         $item->flink = $item->link . '&Itemid=' . $item->id;
                     }
@@ -137,7 +152,7 @@ class QlmenuHelper
 
                     // Get the language of the target menu item when site is multilingual
                     if (Multilanguage::isEnabled()) {
-                        $newItem = $app->getMenu()->getItem((int)$itemParams->get('aliasoptions'));
+                        $newItem = $app->getMenu()->getItem((int) $itemParams->get('aliasoptions'));
 
                         // Use language code if not set to ALL
                         if ($newItem != null && $newItem->language && $newItem->language !== '*') {
@@ -151,54 +166,60 @@ class QlmenuHelper
                     break;
             }
 
-            $item->flink = (str_contains($item->flink, 'index.php?')) && strcasecmp(substr($item->flink, 0, 4), 'http')
+            $item->flink = str_contains($item->flink, 'index.php?') && strcasecmp(substr($item->flink, 0, 4), 'http')
                 ? Route::_($item->flink, true, $itemParams->get('secure'))
                 : Route::_($item->flink);
 
-            // We prevent the double encoding because for some reason the $item is shared for menu modules and we get double encoding
-            // when the cause of that is found the argument should be removed
-            $item->title = htmlspecialchars($item->title, ENT_COMPAT, 'UTF-8', false);
-            $item->menu_icon = htmlspecialchars($itemParams->get('menu_icon_css', ''), ENT_COMPAT, 'UTF-8', false);
-            $item->anchor_css = htmlspecialchars($itemParams->get('menu-anchor_css', ''), ENT_COMPAT, 'UTF-8', false);
-            $item->anchor_title = htmlspecialchars($itemParams->get('menu-anchor_title', ''), ENT_COMPAT, 'UTF-8', false);
-            $item->anchor_rel = htmlspecialchars($itemParams->get('menu-anchor_rel', ''), ENT_COMPAT, 'UTF-8', false);
-            $item->menu_image = htmlspecialchars($itemParams->get('menu_image', ''), ENT_COMPAT, 'UTF-8', false);
+            // Prevent double encoding: $item objects are shared between menu modules.
+            $item->title          = htmlspecialchars($item->title, ENT_COMPAT, 'UTF-8', false);
+            $item->menu_icon      = htmlspecialchars($itemParams->get('menu_icon_css', ''), ENT_COMPAT, 'UTF-8', false);
+            $item->anchor_css     = htmlspecialchars($itemParams->get('menu-anchor_css', ''), ENT_COMPAT, 'UTF-8', false);
+            $item->anchor_title   = htmlspecialchars($itemParams->get('menu-anchor_title', ''), ENT_COMPAT, 'UTF-8', false);
+            $item->anchor_rel     = htmlspecialchars($itemParams->get('menu-anchor_rel', ''), ENT_COMPAT, 'UTF-8', false);
+            $item->menu_image     = htmlspecialchars($itemParams->get('menu_image', ''), ENT_COMPAT, 'UTF-8', false);
             $item->menu_image_css = htmlspecialchars($itemParams->get('menu_image_css', ''), ENT_COMPAT, 'UTF-8', false);
         }
 
         if (isset($items[$lastitem])) {
-            $items[$lastitem]->deeper = (($start ?: 1) > $items[$lastitem]->level);
-            $items[$lastitem]->shallower = (($start ?: 1) < $items[$lastitem]->level);
+            $items[$lastitem]->deeper     = (($start ?: 1) > $items[$lastitem]->level);
+            $items[$lastitem]->shallower  = (($start ?: 1) < $items[$lastitem]->level);
             $items[$lastitem]->level_diff = ($items[$lastitem]->level - ($start ?: 1));
         }
 
-        $items = $this->addClassToMenuItems($items, $path, $default_id, $active_id);
         $cache->store($items, $cacheKey);
+
         return $items;
     }
 
-    private function addClassToMenuItems(array $items, array $path = [], int $default_id = 0, int $active_id = 0): array
+    /**
+     * @param   MenuItem[]  $items
+     *
+     * @return  MenuItem[]
+     */
+    private function addClassToMenuItems(array $items, array $path, int $defaultId, int $activeId): array
     {
-        foreach ($items as $i => &$item) {
-            $class = static::getClass($item, $path, $default_id, $active_id);
-            // we write class into ach items params, because there is no direct attribute class
-            $item->getParams()->set('class', $class);
+        foreach ($items as $item) {
+            // MenuItem has no class attribute, so the computed classes are stored in its params.
+            $item->getParams()->set(self::ITEM_CLASS_PARAM, $this->getClass($item, $path, $defaultId, $activeId));
         }
+
         return $items;
     }
 
-    private static function getClass($item, array $path, int $default_id, int $active_id): string
+    private function getClass(MenuItem $item, array $path, int $defaultId, int $activeId): string
     {
         $itemParams = $item->getParams();
-        $class = ['nav-item', sprintf('item-%s', $item->id)];
-        if ((int)$item->id === $default_id) {
+        $class      = ['nav-item', 'item-' . $item->id];
+
+        if ((int) $item->id === $defaultId) {
             $class[] = 'default';
         }
-        if ((int)$item->id === $active_id || ('alias' === $item->type && (int)$itemParams->get('aliasoptions') === $active_id)) {
+
+        if ((int) $item->id === $activeId || ($item->type === 'alias' && (int) $itemParams->get('aliasoptions') === $activeId)) {
             $class[] = 'current';
         }
 
-        if ('separator' === $item->type) {
+        if ($item->type === 'separator') {
             $class[] = 'divider';
         }
 
@@ -210,156 +231,132 @@ class QlmenuHelper
             $class[] = 'parent';
         }
 
-        if (in_array($item->id, $path)) {
+        if (\in_array($item->id, $path)) {
             $class[] = 'active';
-        } elseif ('alias' === $item->type) {
+        } elseif ($item->type === 'alias') {
             $aliasToId = $itemParams->get('aliasoptions');
-            if (count($path) > 0 && $aliasToId == $path[count($path) - 1]) {
+
+            if (\count($path) > 0 && $aliasToId == $path[\count($path) - 1]) {
                 $class[] = 'active';
-            } elseif (in_array($aliasToId, $path)) {
+            } elseif (\in_array($aliasToId, $path)) {
                 $class[] = 'alias-parent-active';
             }
         }
+
         return implode(' ', $class);
     }
-    
-    public function getBaseItem(Registry &$params, CMSApplicationInterface $app): object
+
+    public function getBaseItem(Registry $params, CMSApplicationInterface $app): MenuItem
     {
-        $base = ($params->get('base')) ? $app->getMenu()->getItem($params->get('base')): false;
-        return !$base ? $this->getActiveItem($app) : $base;
+        $base = $params->get('base') ? $app->getMenu()->getItem((int) $params->get('base')) : null;
+
+        return $base ?: $this->getActiveItem($app);
     }
 
-    public function getActiveItem(CMSApplicationInterface $app): object
+    public function getActiveItem(CMSApplicationInterface $app): MenuItem
+    {
+        return $app->getMenu()->getActive() ?: $this->getDefaultItem($app);
+    }
+
+    public function getDefaultItem(CMSApplicationInterface $app): MenuItem
     {
         $menu = $app->getMenu();
-        return $menu->getActive() ?: $this->getDefaultItem($app);
-    }
-    public function getInlineCss(ParametersCustom $parametersCustom): string
-    {
-        $level1Color = $parametersCustom->getLevel1stColor();
-        $level1BackgroundColor = $parametersCustom->getLevel1stBackgroundColor();
-        $level1ColorHover = $parametersCustom->getLevel1stColorHover();
-        $level1BackgroundColorHover = $parametersCustom->getLevel1stBackgroundColorHover();
-        $level1ColorActive = $parametersCustom->getLevel1stColorActive();
-        $level1BackgroundColorActive = $parametersCustom->getLevel1stBackgroundColorActive();
-        $level1Padding = $parametersCustom->getLevel1stPadding();
-        $level1Width = $parametersCustom->getLevel1stWidth();
-        $level1FontSize = $parametersCustom->getLevel1stFontSize();
-        $level2Color = $parametersCustom->getLevel2ndColor();
-        $level2BackgroundColor = $parametersCustom->getLevel2ndBackgroundColor();
-        $level2ColorHover = $parametersCustom->getLevel2ndColorHover();
-        $level2BackgroundColorHover = $parametersCustom->getLevel2ndBackgroundColorHover();
-        $level2ColorActive = $parametersCustom->getLevel2ndColorActive();
-        $level2BackgroundColorActive = $parametersCustom->getLevel2ndBackgroundColorActive();
-        $level2Padding = $parametersCustom->getLevel2ndPadding();
-        $level2Width = $parametersCustom->getLevel2ndWidth();
-        $level2BorderWidth = $parametersCustom->getLevel2ndBorderWidth();
-        $level2BorderColor = $parametersCustom->getLevel2ndBorderColor();
-        $level2FontSize = $parametersCustom->getLevel2ndFontSize();
-        $level3Color = $parametersCustom->getLevel3rdColor();
-        $level3BackgroundColor = $parametersCustom->getLevel3rdBackgroundColor();
-        $level3ColorHover = $parametersCustom->getLevel3rdColorHover();
-        $level3BackgroundColorHover = $parametersCustom->getLevel3rdBackgroundColorHover();
-        $level3ColorActive = $parametersCustom->getLevel3rdColorActive();
-        $level3BackgroundColorActive = $parametersCustom->getLevel3rdBackgroundColorActive();
-        $level3Padding = $parametersCustom->getLevel3rdPadding();
-        $level3Width = $parametersCustom->getLevel3rdWidth();
-        $level3BorderWidth = $parametersCustom->getLevel3rdBorderWidth();
-        $level3BorderColor = $parametersCustom->getLevel3rdBorderColor();
-        $level3FontSize = $parametersCustom->getLevel3rdFontSize();
 
-        return implode("\n", [
-            sprintf(
-                'ul.mod-qlmenu-ul > li > * { color: %s; background-color: %s; padding: %s; font-size: %s; min-width: %s; }',
-                $level1Color,
-                $level1BackgroundColor,
-                $level1Padding,
-                $level1FontSize,
-                $level1Width
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li:hover > * { color: %s; background-color: %s; }',
-                $level1ColorHover,
-                $level1BackgroundColorHover
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li.active > * { color: %s; background-color: %s; }',
-                $level1ColorActive,
-                $level1BackgroundColorActive
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub { min-width: %s; background-color: %s; }',
-                $level2Width,
-                $level2BackgroundColor
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > * { color: %s; background-color: %s; padding: %s; font-size: %s; border-bottom: %s solid %s; }',
-                $level2Color,
-                $level2BackgroundColor,
-                $level2Padding,
-                $level2FontSize,
-                $level2BorderWidth,
-                $level2BorderColor
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li:hover > * { color: %s; background-color: %s; }',
-                $level2ColorHover,
-                $level2BackgroundColorHover
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li.active > * { color: %s; background-color: %s; }',
-                $level2ColorActive,
-                $level2BackgroundColorActive
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub { min-width: %s; background-color: %s; }',
-                $level3Width,
-                $level3BackgroundColor
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub > li > * { color: %s; background-color: %s; padding: %s; font-size: %s;  border: %s solid %s;}',
-                $level3Color,
-                $level3BackgroundColor,
-                $level3Padding,
-                $level3FontSize,
-                $level3BorderWidth,
-                $level3BorderColor
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub > li:hover > * { color: %s; background-color: %s; }',
-                $level3ColorHover,
-                $level3BackgroundColorHover
-            ),
-            sprintf(
-                'ul.mod-qlmenu-ul > li > ul.mod-menu__sub > li > ul.mod-menu__sub > li.active > * { color: %s; background-color: %s; }',
-                $level3ColorActive,
-                $level3BackgroundColorActive
-            ),
-        ]);
-    }
-    public function getDefaultItem(CMSApplicationInterface $app): object
-    {
-        $menu = $app->getMenu();
-        return (Multilanguage::isEnabled()) ? $menu->getDefault($app->getLanguage()->getTag()) : $menu->getDefault();
+        return Multilanguage::isEnabled() ? $menu->getDefault($app->getLanguage()->getTag()) : $menu->getDefault();
     }
 
-    public static function getList(&$params)
+    /**
+     * Builds the per-module CSS from the style params, scoped to the menu's HTML id
+     * so several qlmenu modules on one page can be styled independently.
+     */
+    public function getInlineCss(ParametersCustom $p, string $menuId): string
     {
-        return (new self())->getItems($params, Factory::getApplication());
+        $root = 'ul#' . $menuId;
+        $l2   = $root . ' > li > ul.mod-menu__sub';
+        $l3   = $l2 . ' > li > ul.mod-menu__sub';
+
+        $rules = [
+            $root . ' > li > *' => [
+                'color'            => $p->getLevel1stColor(),
+                'background-color' => $p->getLevel1stBackgroundColor(),
+                'padding'          => $p->getLevel1stPadding(),
+                'font-size'        => $p->getLevel1stFontSize(),
+                'min-width'        => $p->getLevel1stWidth(),
+            ],
+            $root . ' > li:hover > *' => [
+                'color'            => $p->getLevel1stColorHover(),
+                'background-color' => $p->getLevel1stBackgroundColorHover(),
+            ],
+            $root . ' > li.active > *' => [
+                'color'            => $p->getLevel1stColorActive(),
+                'background-color' => $p->getLevel1stBackgroundColorActive(),
+            ],
+            $l2 => [
+                'min-width'        => $p->getLevel2ndWidth(),
+                'background-color' => $p->getLevel2ndBackgroundColor(),
+            ],
+            $l2 . ' > li > *' => [
+                'color'            => $p->getLevel2ndColor(),
+                'background-color' => $p->getLevel2ndBackgroundColor(),
+                'padding'          => $p->getLevel2ndPadding(),
+                'font-size'        => $p->getLevel2ndFontSize(),
+                'border-bottom'    => $p->getLevel2ndBorderWidth() . ' solid ' . $p->getLevel2ndBorderColor(),
+            ],
+            $l2 . ' > li:hover > *' => [
+                'color'            => $p->getLevel2ndColorHover(),
+                'background-color' => $p->getLevel2ndBackgroundColorHover(),
+            ],
+            $l2 . ' > li.active > *' => [
+                'color'            => $p->getLevel2ndColorActive(),
+                'background-color' => $p->getLevel2ndBackgroundColorActive(),
+            ],
+            $l3 => [
+                'min-width'        => $p->getLevel3rdWidth(),
+                'background-color' => $p->getLevel3rdBackgroundColor(),
+            ],
+            $l3 . ' > li > *' => [
+                'color'            => $p->getLevel3rdColor(),
+                'background-color' => $p->getLevel3rdBackgroundColor(),
+                'padding'          => $p->getLevel3rdPadding(),
+                'font-size'        => $p->getLevel3rdFontSize(),
+                'border'           => $p->getLevel3rdBorderWidth() . ' solid ' . $p->getLevel3rdBorderColor(),
+            ],
+            $l3 . ' > li:hover > *' => [
+                'color'            => $p->getLevel3rdColorHover(),
+                'background-color' => $p->getLevel3rdBackgroundColorHover(),
+            ],
+            $l3 . ' > li.active > *' => [
+                'color'            => $p->getLevel3rdColorActive(),
+                'background-color' => $p->getLevel3rdBackgroundColorActive(),
+            ],
+        ];
+
+        $css = [];
+
+        foreach ($rules as $selector => $declarations) {
+            $lines = [];
+
+            foreach ($declarations as $property => $value) {
+                $value = $this->sanitizeCssValue($value);
+
+                if ($value !== '') {
+                    $lines[] = $property . ': ' . $value . ';';
+                }
+            }
+
+            if ($lines) {
+                $css[] = $selector . ' { ' . implode(' ', $lines) . ' }';
+            }
+        }
+
+        return implode("\n", $css);
     }
-    
-    public static function getBase(&$params)
+
+    /**
+     * Strips characters that could break out of a CSS declaration (free-text params like padding/width).
+     */
+    private function sanitizeCssValue(string $value): string
     {
-        return (new self())->getBaseItem($params, Factory::getApplication());
-    }
-    
-    public static function getActive(&$params)
-    {
-        return (new self())->getActiveItem(Factory::getApplication());
-    }
-    
-    public static function getDefault()
-    {
-        return (new self())->getDefaultItem(Factory::getApplication());
+        return trim(str_replace([';', '{', '}', '<', '>', '"', "'", '\\'], '', $value));
     }
 }

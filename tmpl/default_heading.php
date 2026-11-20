@@ -2,7 +2,7 @@
 
 /**
  * @package     Joomla.Site
- * @subpackage  mod_menu
+ * @subpackage  mod_qlmenu (based on core mod_menu)
  *
  * @copyright   (C) 2012 Open Source Matters, Inc. <https://www.joomla.org>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt

@@ -8,10 +8,11 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 use Joomla\Registry\Registry;
 use stdClass;
 
-require_once __DIR__ . '/ParametersBasicInterface.php';
 
 /**
  * this class contains all basic functionality that a module needs
@@ -22,7 +23,7 @@ class ParametersBasic implements ParametersBasicInterface
     protected ?Registry $params = null;
     protected ?stdClass $module = null;
     protected ?string $message = null;
-    protected ?MessageCollection $errors = null;
+    protected ?ErrorCollection $errors = null;
 
     public function __construct(Registry $params, stdClass $module)
     {
@@ -31,7 +32,7 @@ class ParametersBasic implements ParametersBasicInterface
     }
 
     /**
-     * @return array{ message: string, params: Registry, module: stdClass, errors: MessageItem[] }
+     * @return array{ message: string, params: Registry, module: stdClass, errors: ErrorItem[] }
      */
     public function toArray(): array
     {
@@ -46,7 +47,7 @@ class ParametersBasic implements ParametersBasicInterface
 
     public function displayTitle(): bool
     {
-        return (bool)$this->module?->showtitle ?? false;
+        return (bool)($this->module?->showtitle ?? false);
     }
 
     public function getTitle(): string
@@ -80,7 +81,7 @@ class ParametersBasic implements ParametersBasicInterface
 
     public function existsErrors(): bool
     {
-        return !is_null($this->errors) && !$this->errors->hasErrors();
+        return $this->errors !== null && $this->errors->hasErrors();
     }
 
     public function getParams(): ?Registry
@@ -118,12 +119,12 @@ class ParametersBasic implements ParametersBasicInterface
         $this->message = $message;
     }
 
-    public function getErrors(): ?MessageCollection
+    public function getErrors(): ?ErrorCollection
     {
         return $this->errors;
     }
 
-    public function setErrors(?MessageCollection $errors): void
+    public function setErrors(?ErrorCollection $errors): void
     {
         $this->errors = $errors;
     }

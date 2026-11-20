@@ -8,6 +8,8 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 class ErrorCollection
 {
     /** @var ErrorItem[] */

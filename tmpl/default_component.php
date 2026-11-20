@@ -2,7 +2,7 @@
 
 /**
  * @package     Joomla.Site
- * @subpackage  mod_menu
+ * @subpackage  mod_qlmenu (based on core mod_menu)
  *
  * @copyright   (C) 2009 Open Source Matters, Inc. <https://www.joomla.org>
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -12,7 +12,8 @@ defined('_JEXEC') or die;
 
 use Hoochicken\Module\Qlmenu\Site\Helper\DisplayCustom;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Service\Provider\Application;
+use Joomla\CMS\Application\SiteApplication;
+use Joomla\CMS\Menu\MenuItem;
 use Joomla\Filter\OutputFilter;
 use Joomla\Registry\Registry;
 
@@ -21,7 +22,9 @@ use Joomla\Registry\Registry;
  * @var stdClass $module
  * @var string $class_sfx
  * @var array $list
- * @var Application $app
+ * @var SiteApplication $app
+ * @var MenuItem $item
+ * @var Registry $itemParams
  * @var Registry $params
  * @var array $path
  * @var DisplayCustom $displayModel
@@ -41,7 +44,7 @@ if ($item->anchor_rel) {
     $attributes['rel'] = $item->anchor_rel;
 }
 
-if ($item->id == $displayModel->getActive()?->id ?? 0) {
+if ((int) $item->id === (int) ($displayModel->getActive()?->id ?? 0)) {
     $attributes['aria-current'] = 'location';
 
     if ($item->current) {

@@ -8,11 +8,11 @@
 
 namespace Hoochicken\Module\Qlmenu\Site\Helper;
 
+\defined('_JEXEC') or die;
+
 use Joomla\Registry\Registry;
 use stdClass;
 
-require_once __DIR__ . '/ParametersBasicInterface.php';
-require_once __DIR__ . '/ParametersCustomInterface.php';
 
 class ParametersCustom extends ParametersBasic implements ParametersBasicInterface, ParametersCustomInterface
 {
@@ -21,18 +21,19 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
     private const DEFAULT_START_LEVEL = 1;
     private const DEFAULT_END_LEVEL = 0;
     private const DEFAULT_SHOW_ALL_CHILDREN = true;
+    private const DEFAULT_USE_STYLES = true;
     private const DEFAULT_LEVEL_1ST_COLOR = '#000000';
-    private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR = '#eeeeee';
+    private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR = '#ffffff';
     private const DEFAULT_LEVEL_1ST_COLOR_HOVER = '#000000';
-    private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR_HOVER = '#ec5800';
+    private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR_HOVER = '#eeeeee';
     private const DEFAULT_LEVEL_1ST_COLOR_ACTIVE = '#000000';
     private const DEFAULT_LEVEL_1ST_BACKGROUND_COLOR_ACTIVE = '#ff8800';
     private const DEFAULT_LEVEL_1ST_PADDING = '0.5rem 0.75rem';
     private const DEFAULT_LEVEL_1ST_WIDTH = 'auto';
     private const DEFAULT_LEVEL_1ST_FONT_SIZE = '1rem';
     private const DEFAULT_LEVEL_2ND_COLOR = '#000000';
-    private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR = '#ffffff';
-    private const DEFAULT_LEVEL_2ND_COLOR_HOVER = '#eeeeee';
+    private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR = '#eeeeee';
+    private const DEFAULT_LEVEL_2ND_COLOR_HOVER = '#000000';
     private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR_HOVER = '#ec5800';
     private const DEFAULT_LEVEL_2ND_COLOR_ACTIVE = '#000000';
     private const DEFAULT_LEVEL_2ND_BACKGROUND_COLOR_ACTIVE = '#ff8800';
@@ -40,7 +41,7 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
     private const DEFAULT_LEVEL_2ND_WIDTH = '220px';
     private const DEFAULT_LEVEL_2ND_BORDER_WIDTH = '0';
     private const DEFAULT_LEVEL_2ND_BORDER_COLOR = '#cccccc';
-    private const DEFAULT_LEVEL_2ND_FONT_SIZE = '0.95rem';
+    private const DEFAULT_LEVEL_2ND_FONT_SIZE = '1rem';
     private const DEFAULT_LEVEL_3RD_COLOR = '#000000';
     private const DEFAULT_LEVEL_3RD_BACKGROUND_COLOR = '#ffffff';
     private const DEFAULT_LEVEL_3RD_COLOR_HOVER = '#000000';
@@ -81,6 +82,14 @@ class ParametersCustom extends ParametersBasic implements ParametersBasicInterfa
     public function showAllChildren(): bool
     {
         return (bool)($this->params?->get('showAllChildren', static::DEFAULT_SHOW_ALL_CHILDREN) ?? static::DEFAULT_SHOW_ALL_CHILDREN);
+    }
+
+    /**
+     * Whether the colour/spacing/font settings of the style tabs are applied (inline CSS).
+     */
+    public function useStyles(): bool
+    {
+        return (bool)($this->params?->get('use_styles', static::DEFAULT_USE_STYLES) ?? static::DEFAULT_USE_STYLES);
     }
 
     public function getLevel1stColor(): string
